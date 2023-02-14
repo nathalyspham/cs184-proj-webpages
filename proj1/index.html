@@ -69,11 +69,15 @@
 <p>In task 1, we implemented a simple rasterization function that sampled at the center of each pixel. If the center of the pixel was within the triangle formed by the 3 given coordinates, we filled that pixel with the given color. Instead of checking
    every coordinate, we know that a point inside the triangle cannot have an x/y bigger than the biggest or smaller than the smallest Xi/Yi of a triangle vertex. So we can iterate from min(Xi) to max(Xi) and from min(Yi) to max(Yi), and we only check 
    within the bounding box of the triangle, which is more efficient than checking every pixel in the buffer. To figure out whether a pixel was within the triangle, we used the Point-in-Triangle: Three Line Tests as defined in lecture. This test uses a
-    line equation, computed for each triangle side: Li ( x, y ) = -( x - Xi ) * ( Yi+1 - Yi ) + ( y - Yi) * ( Xi+1 - Xi ). And if Li is >= 0, it is either on the line or inside the line. Naturally, if ( x, y ) is inside of all three lines (L0, L1, L2 >= 0)
+    line equation, computed for each triangle side: Li ( x, y ) = -( x - Xi ) * ( Y(i+1) - Yi ) + ( y - Yi) * ( X(i+1) - Xi ). And if Li is >= 0, the point is either on the line or inside the line. Naturally, if ( x, y ) is inside of all three lines (L0, L1, L2 >= 0)
      then ( x, y ) must be inside the triangle. Something we failed to understand at first was the case in which ( x, y ) is outside of all of the lines (L0, L1, L2 < 0), which is seemingly impossible. If this is the case, our triangle is “rotated” the wrong
-      way since we subtracted the Xi and Yi the wrong way, and the point must still be inside the triangle.
+      way since we subtracted the Xi and Yi counterclockwise, and the point must still be inside the triangle.
 </p>
+
+<p>Results after Task 1</p>
 <img src="./images/screenshot_2-14_12-10-2.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-21-15.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-22-57.png" align="middle" width="400px"/>
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
