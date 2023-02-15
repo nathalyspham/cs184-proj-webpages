@@ -69,7 +69,7 @@
 <p>In task 1, we implemented a simple rasterization function that sampled at the center of each pixel. If the center of the pixel was within the triangle formed by the 3 given coordinates, we filled that pixel with the given color. Instead of checking
    every coordinate, we know that a point inside the triangle cannot have an x/y bigger than the biggest or smaller than the smallest Xi/Yi of a triangle vertex. So we can iterate from min(Xi) to max(Xi) and from min(Yi) to max(Yi), and we only check 
    within the bounding box of the triangle, which is more efficient than checking every pixel in the buffer. To figure out whether a pixel was within the triangle, we used the Point-in-Triangle: Three Line Tests as defined in lecture. This test uses a
-    line equation, computed for each triangle side: Li ( x, y ) = -( x - Xi ) * ( Y(i+1) - Yi ) + ( y - Yi) * ( X(i+1) - Xi ). And if Li is >= 0, the point is either on the line or inside the line. Naturally, if ( x, y ) is inside of all three lines (L0, L1, L2 >= 0)
+    line equation, computed for each triangle side: Li ( x, y ) = -( x - Xi ) * ( Y(i+1) - Yi ) + ( y - Yi ) * ( X(i+1) - Xi ). And if Li is >= 0, the point is either on the line or inside the line. Naturally, if ( x, y ) is inside of all three lines (L0, L1, L2 >= 0)
      then ( x, y ) must be inside the triangle. Something we failed to understand at first was the case in which ( x, y ) is outside of all of the lines (L0, L1, L2 < 0), which is seemingly impossible. If this is the case, our triangle is “rotated” the wrong
       way since we subtracted the Xi and Yi counterclockwise, and the point must still be inside the triangle.
 </p>
@@ -78,10 +78,44 @@
 <img src="./images/screenshot_2-14_12-10-2.png" align="middle" width="400px"/>
 <img src="./images/screenshot_2-14_12-21-15.png" align="middle" width="400px"/>
 <img src="./images/screenshot_2-14_12-22-57.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-29-13.png" align="middle" width="400px"/>
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
+<p>Our images have aliasing after task 1, so in task 2, we use supersampling in order to get rid of jaggies. Our logic starts off similar to task 1, but we add the idea of averaging the colors inside of a pixel instead of just strictly taking or not taking
+   a certain color for the entire pixel. This will prevent our image from having harsh blocks that make up the jaggies. Given a sample rate s, our algorithm divides each pixel into s subpixels and then we make the sample buffer the length of the frame buffer
+    * s and then fill it with every subpixel sample. It is like we are rasterizing a higher resolution image, and we use the sample buffer to store this image. Then, in order to downsample this image into the dimensions of the framebuffer, we average out the
+     colors of the s subpixels into a single pixel, like how they were originally, when we resolve to framebuffer. To average out the colors, we used the Color class to add all the subpixels’ reds, greens, and blues individually together and and then divide
+      each by s. We then encountered a problem where the rectangular borders around our images became blurry as the sample rate went up, and to solve this, we created separate fill_pixel methods for points and lines versus triangles.
+</p>
 
+<p>Results after Task 2</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-30.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 1 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-33.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 4 per pixel</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-35.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 9 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-37.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 16 per pixel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3 align="middle">Part 3: Transforms</h3>
 
