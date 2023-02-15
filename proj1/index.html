@@ -150,6 +150,8 @@
    was bent at the elbow and the left arm diagonal upwards. We also made the head and body bent towards the bent arm and the knees bent to look more natural.
 </p>
 
+<p>Results</p>
+
 <div align="middle">
   <table style="width=100%">
     <tr>
@@ -169,6 +171,18 @@
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
 
+<p>Barycentric coordinates use coordinates defined by ratios of a triangle instead of a universal x, y coordinate plane. ( x, y ) can be defined as alpha * A + beta * B + gamma * C. Alpha is the line equation between B and C of x and y divided by the line equation
+   between B and C of xA and yA, and beta and gamma are similar. More intuitively, alpha is just how far away a point is away from the line made by B and C compared to how far A is from B and C, and thus, alpha can also be seen as how close a point is to A. For
+    task 4, to figure out what color a point was, we derived and used alpha, beta, and gamma as ratios for how much color of A, B, and C to use respectively. The higher the alpha, the closer the point is to A, and so it should have more of the color at A. The below
+     image is a slide from lecture that shows this relation. In this case, the distance between V and the edge between VB and VC is a lot smaller than the distance between VA and the edge between VB and VC, so alpha will be small. V is decently far from VA and should
+      not have a lot of the VA color, so it makes sense to use alpha as a ratio of "how much A" we should have.
+</p>
+
+<img src="./images/Screenshot 2023-02-14 at 5.43.20 PM.png" align="middle" width="400px"/>
+
+<p>Results</p>
+
+<img src="./images/screenshot_2-14_17-40-37.png" align="middle" width="400px"/>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 
