@@ -25,7 +25,7 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
 <h1 align="middle">Project 1: Rasterizer</h1>
-<h2 align="middle">YOUR NAME, CS184-??</h2>
+<h2 align="middle">Kehan Li and Nathalys Pham, CS184</h2>
 
 <br><br>
 
@@ -38,20 +38,151 @@
 
 <h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
 
-<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+<!-- <p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/image1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image2.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/image3.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image4.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div> -->
+
+<p>In task 1, we implemented a simple rasterization function that sampled at the center of each pixel. If the center of the pixel was within the triangle formed by the 3 given coordinates, we filled that pixel with the given color. Instead of checking
+   every coordinate, we know that a point inside the triangle cannot have an x/y bigger than the biggest or smaller than the smallest Xi/Yi of a triangle vertex. So we can iterate from min(Xi) to max(Xi) and from min(Yi) to max(Yi), and we only check 
+   within the bounding box of the triangle, which is more efficient than checking every pixel in the buffer. To figure out whether a pixel was within the triangle, we used the Point-in-Triangle: Three Line Tests as defined in lecture. This test uses a
+    line equation, computed for each triangle side: Li ( x, y ) = -( x - Xi ) * ( Y(i+1) - Yi ) + ( y - Yi ) * ( X(i+1) - Xi ). And if Li is >= 0, the point is either on the line or inside the line. Naturally, if ( x, y ) is inside of all three lines (L0, L1, L2 >= 0)
+     then ( x, y ) must be inside the triangle. Something we failed to understand at first was the case in which ( x, y ) is outside of all of the lines (L0, L1, L2 < 0), which is seemingly impossible. If this is the case, our triangle is “rotated” the wrong
+      way since we subtracted the Xi and Yi counterclockwise, and the point must still be inside the triangle.
+</p>
+
+<p>Results after Task 1</p>
+<img src="./images/screenshot_2-14_12-10-2.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-21-15.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-22-57.png" align="middle" width="400px"/>
+<img src="./images/screenshot_2-14_12-29-13.png" align="middle" width="400px"/>
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
+<p>Our images have aliasing after task 1, so in task 2, we use supersampling in order to get rid of jaggies. Our logic starts off similar to task 1, but we add the idea of averaging the colors inside of a pixel instead of just strictly taking or not taking
+   a certain color for the entire pixel. This will prevent our image from having harsh blocks that make up the jaggies. Given a sample rate s, our algorithm divides each pixel into s subpixels and then we make the sample buffer the length of the frame buffer
+    * s and then fill it with every subpixel sample. It is like we are rasterizing a higher resolution image, and we use the sample buffer to store this image. Then, in order to downsample this image into the dimensions of the framebuffer, we average out the
+     colors of the s subpixels into a single pixel, like how they were originally, when we resolve to framebuffer. To average out the colors, we used the Color class to add all the subpixels’ reds, greens, and blues individually together and and then divide
+      each by s. We then encountered a problem where the rectangular borders around our images became blurry as the sample rate went up, and to solve this, we created separate fill_pixel methods for points and lines versus triangles.
+</p>
 
+<p>Results after Task 2</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-30.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 1 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-33.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 4 per pixel</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-35.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 9 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_12-12-37.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 16 per pixel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_16-27-42.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 1 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_16-27-46.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 4 per pixel</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_16-27-48.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 9 per pixel</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_16-27-53.png" align="middle" width="400px"/>
+        <figcaption align="middle">supersample rate 16 per pixel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h3 align="middle">Part 3: Transforms</h3>
 
+<p>
+  We got these matrices by following the logic of matrix transformations on vectors in lecture 4. In our updated cuberman, we made him dabbing. We did this by rotating and transforming the arms, legs, and body. Our goal was to make the right arm look like it
+   was bent at the elbow and the left arm diagonal upwards. We also made the head and body bent towards the bent arm and the knees bent to look more natural.
+</p>
 
+<p>Results</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="./images/screenshot_2-14_16-47-34.png" align="middle" width="400px"/>
+        <figcaption align="middle">original cuberman</figcaption>
+      </td>
+      <td>
+        <img src="./images/screenshot_2-14_12-14-56.png" align="middle" width="400px"/>
+        <figcaption align="middle">updated/fun cuberman</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <h2 align="middle">Section II: Sampling</h2>
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
+
+<p>Barycentric coordinates use coordinates defined by ratios of a triangle instead of a universal x, y coordinate plane. ( x, y ) can be defined as alpha * A + beta * B + gamma * C. Alpha is the line equation between B and C of x and y divided by the line equation
+   between B and C of xA and yA, and beta and gamma are similar. More intuitively, alpha is just how far away a point is away from the line made by B and C compared to how far A is from B and C, and thus, alpha can also be seen as how close a point is to A. For
+    task 4, to figure out what color a point was, we derived and used alpha, beta, and gamma as ratios for how much color of A, B, and C to use respectively. The higher the alpha, the closer the point is to A, and so it should have more of the color at A. The below
+     image is a slide from lecture that shows this relation. In this case, the distance between V and the edge between VB and VC is a lot smaller than the distance between VA and the edge between VB and VC, so alpha will be small. V is decently far from VA and should
+      not have a lot of the VA color, so it makes sense to use alpha as a ratio of "how much A" we should have.
+</p>
+
+<img src="./images/Screenshot 2023-02-14 at 5.43.20 PM.png" align="middle" width="400px"/>
+
+<p>Results</p>
+
+<img src="./images/screenshot_2-14_17-40-37.png" align="middle" width="400px"/>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
 <p> Pixel sampling is a kind of re-sampling that samples from the existing pixels of an image in order to reconstruct new pixels to represent the image. We used it to implement texture mapping by sampling texture based on pixel sampling. Compared to the previous task, instead of using barycentric coordinates to get the new color for the pixel, we used barycentric coordinate to interpolate the u,v coordinate of the point, then used pixel sampling around that u,v coordinate to get it's color(texture). With nearest pixel sampling, we would just sampling the nearest integer texture. With bilinear pixel sampling, we carry out lerps such that we intepolate the texture of the pixel using its four closest points.</p>
