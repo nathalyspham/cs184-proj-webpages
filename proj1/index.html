@@ -40,32 +40,6 @@
 
 <p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 
-<div align="middle">
-  <table style="width=100%">
-    <tr>
-      <td>
-        <img src="images/image1.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-      <td>
-        <img src="images/image2.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="images/image3.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-      <td>
-        <img src="images/image4.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-    </tr>
-  </table>
-</div>
-
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
@@ -79,14 +53,69 @@
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
 
-
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
-
-
+<p> Pixel sampling is a kind of re-sampling that samples from the existing pixels of an image in order to reconstruct new pixels to represent the image. We used it to implement texture mapping by sampling texture based on pixel sampling. Compared to the previous task, instead of using barycentric coordinates to get the new color for the pixel, we used barycentric coordinate to interpolate the u,v coordinate of the point, then used pixel sampling around that u,v coordinate to get it's color(texture). With nearest pixel sampling, we would just sampling the nearest integer texture. With bilinear pixel sampling, we carry out lerps such that we intepolate the texture of the pixel using its four closest points.</p>
+<p> Test 6 is a good example where bilinear sampling is better. It is visible that sometimes the small pattern becomes disconnected when using nearest pixel, but it is continuous when using bilinear sampling.</p>
+<center><img src="images/bi-test5.png" align= "middle" width="400px"/></center>
+<figcaption align="middle">Test 6 with Bilinear sampling, the pattern in the center is clear</figcaption>
+<center><img src="images/ne-test5.png" align= "middle" width="400px"/></center>
+<figcaption align="middle">Test 6 with nearest pixel sampling, the pattern in the center is sometimes discontinuous and jaggy.</figcaption>
+<p> Below we compare the effects of sample per pixel and sampling method.</p>
+<div align="middle">
+	<table style="width=100%">
+	  <tr>
+		<td>
+		  <img src="images/nearest-1.png" align="middle" width="400px"/>
+		  <figcaption align="middle">nearest sampling at 1 sample per pixel</figcaption>
+		</td>
+		<td>
+		  <img src="images/nearest-16.png" align="middle" width="400px"/>
+		  <figcaption align="middle">nearest sampling at 16 sample per pixel</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr>
+		<td>
+		  <img src="images/bilinear-1.png" align="middle" width="400px"/>
+		  <figcaption align="middle">bilinear sampling at 1 sample per pixel</figcaption>
+		</td>
+		<td>
+		  <img src="images/bilinear-16.png" align="middle" width="400px"/>
+		  <figcaption align="middle">bilinear sampling at 16 sample per pixel</figcaption>
+		</td>
+	  </tr>
+	</table>
+  </div> 
+<p> It may be visible that the image looks less jaggy when we increase sampling rate and when we use bilinear sampling. There would big a bigger difference when using bilinear sampling and nearest sampling, when the color change more frequently and when the changes don't occur at pixel boundaries, as in this case bilinear sampling will produce more average and therefore smoother results. </p>
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+<p> We understand mipmapping as pre-computing the image at different resolutions so that depending on whether the pixel is in an area with more changes in texture, we can change the resolution we want to sample from in order to choose the color for that pixel. We implemented this by calculating the “level” we should be at, then finding the corresponding texture in that level to draw. Comparing the three methods, number of samplings is the least memory efficient method, since we would have to sample many more pixels and store them for processing, but it is very efficient for reducing anti-aliasing when there are more samples. Pixel sampling selecting is also greatly for reducing anti-alising, but it requires more computation with having to do many linear interpolations and also store many results. Level sampling is more efficient and faster as it requires less computation and storage, having many of the level at lower “resolutions”. However it may produce results that are not as efficient in anti-aliasing. </p>
 
-
-
+<div align="middle">
+	<table style="width=100%">
+	  <tr>
+		<td>
+		  <img src="images/zero--nearest.png" align="middle" width="400px"/>
+		  <figcaption align="middle">L_ZERO and P_NEAREST</figcaption>
+		</td>
+		<td>
+		  <img src="images/zero--linear.png" align="middle" width="400px"/>
+		  <figcaption align="middle">L_ZERO and P_LINEAR</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr>
+		<td>
+		  <img src="images/nearest--nearest.png" align="middle" width="400px"/>
+		  <figcaption align="middle">L_NEAREST and P_NEAREST</figcaption>
+		</td>
+		<td>
+		  <img src="images/nearest--linear.png" align="middle" width="400px"/>
+		  <figcaption align="middle">L_NEAREST and P_LINEAR</figcaption>
+		</td>
+	  </tr>
+	</table>
+  </div> 
+  <p>We chose to experiment with a closeup of a cactus (source: https://www.alamy.com/stock-photo-green-cactus-with-a-lot-of-spikes-143683518.html). As its spikes can show the effects of anti-aliasing. It is visible that zero-level produces results that look a lot more clear and non-jaggy compared to the nearest level. Then, not as obviously, bilinear sampling produces less jaggy results compared to nearest pixel sampling. From these 4 images. Bilinear pixel sampling and zero-level mipmapping produced the best results in terms of clarity and smoothness of the image. </p>
 <h2 align="middle">Section III: Art Competition</h2>
 <p>If you are not participating in the optional art competition, don't worry about this section!</p>
 
