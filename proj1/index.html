@@ -32,7 +32,7 @@
 <div>
 
 <h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+<p>In this project, we implemented various image processing techniques that allowed us to draw shapes, transform shapes, and produce anti-aliasing results. With the methods that we have implemented, we are able to draw triangles with the least amount of aliasing, map images to a different texture, and transform shapes to different orientations. With this, we can produce a range of interesting visual effects. We were definitely able to understand the process of super-sampling, mipmapping, and barycentric coordinates better through this project. It was interesting to see how versatile barycentric coordinates are for interpolating different colors and textures. </p>
 
 <h2 align="middle">Section I: Rasterization</h2>
 
@@ -178,19 +178,19 @@
       not have a lot of the VA color, so it makes sense to use alpha as a ratio of "how much A" we should have.
 </p>
 
-<img src="./images/Screenshot 2023-02-14 at 5.43.20 PM.png" align="middle" width="400px"/>
+<center><img src="./images/Screenshot 2023-02-14 at 5.43.20 PM.png" align="middle" width="400px"/></center>
 
 <p>Results</p>
 
-<img src="./images/screenshot_2-14_17-40-37.png" align="middle" width="400px"/>
+<center><img src="./images/screenshot_2-14_17-40-37.png" align="middle" width="400px"/></center>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
-<p> Pixel sampling is a kind of re-sampling that samples from the existing pixels of an image in order to reconstruct new pixels to represent the image. We used it to implement texture mapping by sampling texture based on pixel sampling. Compared to the previous task, instead of using barycentric coordinates to get the new color for the pixel, we used barycentric coordinate to interpolate the u,v coordinate of the point, then used pixel sampling around that u,v coordinate to get it's color(texture). With nearest pixel sampling, we would just sampling the nearest integer texture. With bilinear pixel sampling, we carry out lerps such that we intepolate the texture of the pixel using its four closest points.</p>
-<p> Test 6 is a good example where bilinear sampling is better. It is visible that sometimes the small pattern becomes disconnected when using nearest pixel, but it is continuous when using bilinear sampling.</p>
+<p> Pixel sampling is a kind of re-sampling that samples from the existing pixels of an image in order to reconstruct new pixels to represent the image. We used it to implement texture mapping by sampling texture based on pixel sampling. Compared to the previous task, instead of using barycentric coordinates to get the new color for the pixel, we used barycentric coordinate to interpolate the u,v coordinate of the point, then used pixel sampling around that u,v coordinate to get it's color(texture). With nearest pixel sampling, we would just sampling the nearest integer texture. With bilinear pixel sampling, we carry out linear interpolations such that we intepolate the texture of the pixel using its four closest points depending on how far our point is from the four.</p>
+<p> Test 5 is a good example where bilinear sampling is better. It is visible that sometimes the small pattern becomes disconnected when using nearest pixel, but it is continuous and more smooth when using bilinear sampling.</p>
 <center><img src="images/bi-test5.png" align= "middle" width="400px"/></center>
-<figcaption align="middle">Test 6 with Bilinear sampling, the pattern in the center is clear</figcaption>
+<figcaption align="middle">Test 5 with Bilinear sampling, the pattern in the center is clear</figcaption>
 <center><img src="images/ne-test5.png" align= "middle" width="400px"/></center>
-<figcaption align="middle">Test 6 with nearest pixel sampling, the pattern in the center is sometimes discontinuous and jaggy.</figcaption>
+<figcaption align="middle">Test 5 with nearest pixel sampling, the pattern in the center is sometimes discontinuous and jaggy.</figcaption>
 <p> Below we compare the effects of sample per pixel and sampling method.</p>
 <div align="middle">
 	<table style="width=100%">
@@ -247,6 +247,7 @@
 	</table>
   </div> 
   <p>We chose to experiment with a closeup of a cactus (source: https://www.alamy.com/stock-photo-green-cactus-with-a-lot-of-spikes-143683518.html). As its spikes can show the effects of anti-aliasing. It is visible that zero-level produces results that look a lot more clear and non-jaggy compared to the nearest level. Then, not as obviously, bilinear sampling produces less jaggy results compared to nearest pixel sampling. From these 4 images. Bilinear pixel sampling and zero-level mipmapping produced the best results in terms of clarity and smoothness of the image. </p>
+  <h2 align="middle">Website link:https://nathalyspham.github.io/cs184-proj-webpages/proj1/index.html</h2>
 <h2 align="middle">Section III: Art Competition</h2>
 <p>If you are not participating in the optional art competition, don't worry about this section!</p>
 
