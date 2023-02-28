@@ -86,7 +86,7 @@
    a certain color for the entire pixel. This will prevent our image from having harsh blocks that make up the jaggies. Given a sample rate s, our algorithm divides each pixel into s subpixels and then we make the sample buffer the length of the frame buffer
     * s and then fill it with every subpixel sample. It is like we are rasterizing a higher resolution image, and we use the sample buffer to store this image. Then, in order to downsample this image into the dimensions of the framebuffer, we average out the
      colors of the s subpixels into a single pixel, like how they were originally, when we resolve to framebuffer. To average out the colors, we used the Color class to add all the subpixels’ reds, greens, and blues individually together and and then divide
-      each by s. We then encountered a problem where the rectangular borders around our images became blurry as the sample rate went up, and to solve this, we created separate fill_pixel methods for points and lines versus triangles.
+      each by s. We then encountered a problem where the rectangular borders around our images became blurry as the sample rate goes up, and to solve this, we created separate fill_pixel methods for points and lines versus triangles.
 </p>
 
 <p>Results after Task 2</p>
@@ -146,7 +146,7 @@
 <h3 align="middle">Part 3: Transforms</h3>
 
 <p>
-  We got these matrices by following the logic of matrix transformations on vectors in lecture 4. In our updated cuberman, we made him dabbing. We did this by rotating and transforming the arms, legs, and body. Our goal was to make the right arm look like it
+  We got these matrices by following the logic of matrix transformations on vectors in lecture 4. In our updated cuberman, we made him dabbing. We did this by rotating and transforming the arms, legs, body, and head. Our goal was to make the right arm look like it
    was bent at the elbow and the left arm diagonal upwards. We also made the head and body bent towards the bent arm and the knees bent to look more natural.
 </p>
 
