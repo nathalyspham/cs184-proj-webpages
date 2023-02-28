@@ -63,7 +63,10 @@
   Briefly explain de Casteljau's algorithm and how you implemented it in order to evaluate Bezier curves.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The de Casteljau algorithm finds the points at the ratio t between all points, and it does this repeatedly
+	 until there is only one point left. This point will be on the resulting Bezier curve at parameter t. To
+	  implement one step of this algorithm, we iterate through all the points and use linear interpolation to
+	   find new points. For given point pi, pi+1, and t, the new point p would be at pi + t * (pi+1 - pi). 
 </p>
 <br>
 
@@ -76,7 +79,7 @@
 </p>
 <!-- Example of including a single figure -->
 <div align="middle">
-  <img src="images/your_file.png" align="middle" width="50%">
+  <img src="images/Screenshot 2023-02-25 at 7.32.55 PM.png" align="middle" width="50%">
 </div>
 <br>
 
@@ -88,30 +91,44 @@
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/Screenshot 2023-02-25 at 7.32.55 PM.png" align="middle" width="400px"/>
         <figcaption>Level 0</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/Screenshot 2023-02-25 at 7.33.02 PM.png" align="middle" width="400px"/>
         <figcaption>Level 1</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/Screenshot 2023-02-25 at 7.33.05 PM.png" align="middle" width="400px"/>
         <figcaption>Level 2</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/Screenshot 2023-02-25 at 7.33.12 PM.png" align="middle" width="400px"/>
         <figcaption>Level 3</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/Screenshot 2023-02-25 at 7.33.16 PM.png" align="middle" width="400px"/>
         <figcaption>Level 4</figcaption>
+      </td>
+    </tr>
+	<br>
+    <tr align="center">
+      <td>
+        <img src="images/Screenshot 2023-02-25 at 7.33.22 PM.png" align="middle" width="400px"/>
+        <figcaption>Level 5</figcaption>
+      </td>
+    </tr>
+	<br>
+    <tr align="center">
+      <td>
+        <img src="images/Screenshot 2023-02-25 at 7.33.26 PM.png" align="middle" width="400px"/>
+        <figcaption>Final Curve</figcaption>
       </td>
     </tr>
   </table>
@@ -123,7 +140,7 @@
   Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter \(t\) via mouse scrolling.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    <img src="images/Screenshot 2023-02-25 at 7.35.50 PM.png" align="middle" width="400px"/>
 </p>  
 <br>
 
@@ -133,7 +150,14 @@
   Briefly explain how de Casteljau algorithm extends to Bezier surfaces and how you implemented it in order to evaluate Bezier surfaces.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    We use the separable 1D de Casteljau, as defined in lecture. We can first apply the de Casteljau algorithm in dimension u to define control points for
+	 the moving curve in dimension v, and then we can apply the de Casteljau algorithm in v to get the final point. 
+</p>
+<p>
+	We implemented this by using three separate functions. evaluateStep() performs one step of de Casteljau, like in task 1, and evaluate1D() runs de Casteljau
+	 fully in one dimension by calling evaluateStep until there is only 1 point left. evaluate() runs de Casteljau fully in 2 dimensions to evaluate the Bezier
+	  patch at parameter (u, v).  It calls evaluate1D() for all of u (all the rows) to get the moving curve, and then, it finds the final point by calling evaluate1D()
+	   for v on the points of the moving curve.
 </p>
 <br>
 
@@ -142,7 +166,7 @@
   Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    <img src="images/Screenshot 2023-02-26 at 8.27.36 PM.png" align="middle" width="400px"/>
 </p>
 <br>
 
@@ -151,11 +175,21 @@
 
 <h3 align="middle">Part 3: Area-Weighted Vertex Normals</h3>
 
+<img src="images/Screenshot 2023-02-28 at 11.31.37 AM.png" align="middle" width="400px"/>
+
 <b>
   Briefly explain how you implemented the area-weighted vertex normals.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    To calculate the area-weighted vertex normals, we used the formula from lecture where the
+	 vertexNormalVector = (the sum of the facesNormalVectors) / (the euclidean norm of the sum
+	  of the facesNormalVectors). We also had to weight the normals of the faces by their area,
+	   and we found this area by using the cross product of two of the face’s vectors to get a
+	    normal vector. The magnitude of this normal vector is proportional to the area of the
+		 face. We were already provided a method to find the normal vector of a face, so we just
+		  multiplied the magnitude/euclidean length of that vector with itself. We then did this
+		   for every face that touches the vertex and added them together. Then, we just divided
+		    by the norm to get a normalized unit vector. 
 </p>
 <br>
 
@@ -163,9 +197,31 @@
 <b>
   Show screenshots of dae/teapot.dae (not .bez) comparing teapot shading with and without vertex normals. Use <kbd>Q</kbd> to toggle default flat shading and Phong shading.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-26 at 1.00.27 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Vertex Normals</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-26 at 1.00.19 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Vertex Normals</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-26 at 1.00.33 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Vertex Normals</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-26 at 1.00.41 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Vertex Normals</figcaption>
+		</td>
+	  </tr>
+	</table>
+</div>
 <br>
 
 
@@ -174,7 +230,16 @@
   Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+	<img src="images/Screenshot 2023-02-28 at 11.31.37 AM.png" align="middle" width="400px"/>
+    We followed the strategy of the image below in order to accomplish the flip operation. We first set pointers to all of the items in the
+	 two triangles: 6 inside halfedges, 4 outside halfedges, 2 faces, 4 vertices, 5 edges. We kept the locations of the inside halfedges in
+	  relation to each other the same. It’s like we took all the inside halfedges and rotated them clockwise. The faces stayed the same too
+	   because we made the left face the new top face. What we changed were the locations of the halfedges, and we did this by changing the
+	    vertices, edges, and twins they were associated with. For example, h2’s vertex would change from v2 to v0, its edge from e2 to e3,
+		 and its twin from h7 to h8, and its next and face would stay the same. We went through all the halfedges and changed their next, twin,
+		  vertex, edge, and face pointers like the below image using setNeighbors. Then, we went through all the vertices, edges, and faces and
+		   changed their halfedge pointer to be the new one they are associated with.
+	<img src="images/Screenshot 2023-02-28 at 11.28.55 AM.png" align="middle" width="400px"/>
 </p>
 <br>
 
@@ -182,9 +247,31 @@
 <b>
   Show screenshots of the teapot before and after some edge flips.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 11.24.09 AM.png" align="middle" width="400px"/>
+		  <figcaption>Before Flips, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 11.24.18 AM.png" align="middle" width="400px"/>
+		  <figcaption>Before Flips, With Shading</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 11.25.12 AM.png" align="middle" width="400px"/>
+		  <figcaption>After Flips, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 11.25.17 AM.png" align="middle" width="400px"/>
+		  <figcaption>After Flips, With Shading</figcaption>
+		</td>
+	  </tr>
+	</table>
+</div>
 <br>
 
 
@@ -192,17 +279,30 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    I think setting pointers to everything at the beginning and making a clear visual of where stuff moves helped me a lot to avoid bugs. Getting
+	 started was definitely the hardest part for me. I was really confused before I saw the above image on edstem. I understood that you need a lot
+	  of pointers and then you need to move a bunch of stuff, but I kept getting lost in my own logic. My naming convention was also really bad and
+	   confusing. For a halfedge, I called it ab if it was going from vertex a to vertex b, and it made it harder for me to see what it should look
+	    like after the flip when the vertices were supposed to change. After I implemented this function, I set a screenshot of my teapot with flipped
+		 edges to my friend because I thought it was weird how it became indented, and he said it looked weird because his never indented. And I spent
+		  so long trying to debug this, and he updated me and said that he never tried that specific edge and that I was right the whole time T.T. I
+		   get that this indent occurs because the new edge connects the other two vertices, so it goes from being convex to concave.
 </p>
 <br>
 
 
 <h3 align="middle">Part 5: Edge Split</h3>
+
+<img src="images/Screenshot 2023-02-28 at 2.29.53 PM.png" align="middle" width="400px"/>
+
 <b>
   Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    Similar to task 4, we started by creating pointers for all of the halfedges, faces, vertices, and edges. Then, we created 6 halfedges, 2
+	 faces, 1 vertex, and 3 edges. We thought of this task as pushing the inside up, so the left face becomes the top left face, and e0 becomes
+	  the edge between the vertices c and m. And the newly created items fill in the rest. We then use setNeighbors for all of the halfedges and
+	   set all the halfedge pointers for the vertices, edges, and faces to their corresponding halfedges.
 </p>
 <br>
 
@@ -211,7 +311,20 @@
     Show screenshots of a mesh before and after some edge splits. 
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    <div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/Screenshot 2023-02-28 at 2.57.21 PM.png" align="middle" width="400px"/>
+			  <figcaption>Before Splits, Without Shading</figcaption>
+			</td>
+			<td>
+			  <img src="images/Screenshot 2023-02-28 at 2.57.25 PM.png" align="middle" width="400px"/>
+			  <figcaption>After Splits, With Shading</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
 </p>
 <br>
 
@@ -220,7 +333,20 @@
     Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    <div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/Screenshot 2023-02-28 at 2.58.25 PM.png" align="middle" width="400px"/>
+			  <figcaption>Before Splits and Flips, Without Shading</figcaption>
+			</td>
+			<td>
+			  <img src="images/Screenshot 2023-02-28 at 2.58.28 PM.png" align="middle" width="400px"/>
+			  <figcaption>After Splits and Flips, With Shading</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
 </p>
 <br>
 
@@ -229,7 +355,11 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    My naming scheme of using am for vertex a to vertex m was super helpful in this task because nothing
+	 moved around, and I could easily track all of the pointers. The only issue I had with this task was that
+	  I forgot to set the position of the new vertex (m->position()), so spots in my mesh would collapse
+	   inwards whenever I would call splitEdge since position would default to (0, 0, 0). Everything else went
+	    smoothly :)!
 </p>
 <br>
 
