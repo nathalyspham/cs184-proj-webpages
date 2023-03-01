@@ -41,7 +41,7 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
 <h1 align="middle">Project 2: Mesh Edit</h1>
-<h2 align="middle">YOUR NAME</h2>
+<h2 align="middle">Kehan and Nathalys</h2>
 
 <br><br>
 
@@ -74,9 +74,6 @@
 <b>
   Take a look at the provided .bzc files and create your own Bezier curve with 6 control points of your choosing. Use this Bezier curve for your screenshots below.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
 <!-- Example of including a single figure -->
 <div align="middle">
   <img src="images/Screenshot 2023-02-25 at 7.32.55 PM.png" align="middle" width="50%">
@@ -116,10 +113,7 @@
         <img src="images/Screenshot 2023-02-25 at 7.33.16 PM.png" align="middle" width="400px"/>
         <figcaption>Level 4</figcaption>
       </td>
-    </tr>
-	<br>
-    <tr align="center">
-      <td>
+	  <td>
         <img src="images/Screenshot 2023-02-25 at 7.33.22 PM.png" align="middle" width="400px"/>
         <figcaption>Level 5</figcaption>
       </td>
@@ -140,7 +134,11 @@
   Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter \(t\) via mouse scrolling.
 </b>
 <p>
-    <img src="images/Screenshot 2023-02-25 at 7.35.50 PM.png" align="middle" width="400px"/>
+	<tr align="center">
+	  <td>
+    	<img src="images/Screenshot 2023-02-25 at 7.35.50 PM.png" align="middle" width="400px"/>
+	  </td>
+	</tr>
 </p>  
 <br>
 
@@ -166,7 +164,11 @@
   Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
 </b>
 <p>
-    <img src="images/Screenshot 2023-02-26 at 8.27.36 PM.png" align="middle" width="400px"/>
+	<tr align="center">
+	  <td>
+    	<img src="images/Screenshot 2023-02-26 at 8.27.36 PM.png" align="middle" width="400px"/>
+	  </td>
+	</tr>
 </p>
 <br>
 
@@ -174,8 +176,6 @@
 <h2 align="middle">Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 <h3 align="middle">Part 3: Area-Weighted Vertex Normals</h3>
-
-<img src="images/Screenshot 2023-02-28 at 11.31.37 AM.png" align="middle" width="400px"/>
 
 <b>
   Briefly explain how you implemented the area-weighted vertex normals.
@@ -226,11 +226,21 @@
 
 
 <h3 align="middle">Part 4: Edge Flip</h3>
+
+
 <b>
   Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.
 </b>
+
 <p>
-	<img src="images/Screenshot 2023-02-28 at 11.31.37 AM.png" align="middle" width="400px"/>
+	<tr align="center">
+		<td>
+			<img src="images/Screenshot 2023-02-28 at 11.31.37 AM.png" align="middle" width="400px"/>
+		</td>
+	</tr>
+</p>
+
+<p>
     We followed the strategy of the image below in order to accomplish the flip operation. We first set pointers to all of the items in the
 	 two triangles: 6 inside halfedges, 4 outside halfedges, 2 faces, 4 vertices, 5 edges. We kept the locations of the inside halfedges in
 	  relation to each other the same. It’s like we took all the inside halfedges and rotated them clockwise. The faces stayed the same too
@@ -239,11 +249,16 @@
 		 and its twin from h7 to h8, and its next and face would stay the same. We went through all the halfedges and changed their next, twin,
 		  vertex, edge, and face pointers like the below image using setNeighbors. Then, we went through all the vertices, edges, and faces and
 		   changed their halfedge pointer to be the new one they are associated with.
-	<img src="images/Screenshot 2023-02-28 at 11.28.55 AM.png" align="middle" width="400px"/>
+</p>
+
+<p>
+	<tr align="center">
+		<td>
+			<img src="images/Screenshot 2023-02-28 at 11.28.55 AM.png" align="middle" width="400px"/>
+		</td>
+	</tr>
 </p>
 <br>
-
-
 <b>
   Show screenshots of the teapot before and after some edge flips.
 </b>
@@ -293,7 +308,13 @@
 
 <h3 align="middle">Part 5: Edge Split</h3>
 
-<img src="images/Screenshot 2023-02-28 at 2.29.53 PM.png" align="middle" width="400px"/>
+<p>
+	<tr align="center">
+		<td>
+			<img src="images/Screenshot 2023-02-28 at 2.29.53 PM.png" align="middle" width="400px"/>
+		</td>
+	</tr>
+</p>
 
 <b>
   Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.
@@ -310,44 +331,66 @@
 <b>
     Show screenshots of a mesh before and after some edge splits. 
 </b>
-<p>
-    <div align="middle">
-		<table style="width:100%">
-		  <tr align="center">
-			<td>
-			  <img src="images/Screenshot 2023-02-28 at 2.57.21 PM.png" align="middle" width="400px"/>
-			  <figcaption>Before Splits, Without Shading</figcaption>
-			</td>
-			<td>
-			  <img src="images/Screenshot 2023-02-28 at 2.57.25 PM.png" align="middle" width="400px"/>
-			  <figcaption>After Splits, With Shading</figcaption>
-			</td>
-		  </tr>
-		</table>
-	</div>
-</p>
+
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 3.59.13 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Splits, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 3.59.17 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Splits, With Shading</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 4.00.10 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Splits, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 3.59.20 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Splits, With Shading</figcaption>
+		</td>
+	  </tr>
+	</table>
+</div>
+
 <br>
 
 
 <b>
     Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
 </b>
-<p>
-    <div align="middle">
-		<table style="width:100%">
-		  <tr align="center">
-			<td>
-			  <img src="images/Screenshot 2023-02-28 at 2.58.25 PM.png" align="middle" width="400px"/>
-			  <figcaption>Before Splits and Flips, Without Shading</figcaption>
-			</td>
-			<td>
-			  <img src="images/Screenshot 2023-02-28 at 2.58.28 PM.png" align="middle" width="400px"/>
-			  <figcaption>After Splits and Flips, With Shading</figcaption>
-			</td>
-		  </tr>
-		</table>
-	</div>
-</p>
+
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 2.57.21 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Splits and Flips, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 2.57.25 PM.png" align="middle" width="400px"/>
+		  <figcaption>Before Splits and Flips, With Shading</figcaption>
+		</td>
+	  </tr>
+	  <br>
+	  <tr align="center">
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 2.58.25 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Splits and Flips, Without Shading</figcaption>
+		</td>
+		<td>
+		  <img src="images/Screenshot 2023-02-28 at 2.58.28 PM.png" align="middle" width="400px"/>
+		  <figcaption>After Splits and Flips, With Shading</figcaption>
+		</td>
+	  </tr>
+	</table>
+</div>
+
 <br>
 
 
