@@ -49,7 +49,7 @@
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+    As an overview, we implemented the evaluation for bezier curves and surface, and also the tools needed to implement loop sub-division for triangular meshes. We implemented the evaluation of 1D Bezier curves and 2D Bezier surfaces. Then, we implemented different parts of half-edge operations to support loop sub-division. First we implemented Area-Weighted Vertex Normals to compute the normal of a vertex based on its surrounding faces. Then we implemented split and flip operations, which creates new edges in triangles and reassigns pointers to achieve splitting edges and flipping them. Finally, using them together, we implemented loop sub-division which divides the existing mesh into smaller meshes creating a smoother volumn that is consisting of more meshes just by dividing the existing initial meshes.   
 </p>
 <br>
 
@@ -400,7 +400,7 @@
   Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    I implemented loop subdivison closely following the instructions given in the starter code. First, I computed the new position for new vertices and updated positions for old vertices using the formulas taught in lecture, and assigned is_new as false for them. I stored those new coordinates in the new_positions attribute. Then, I looped over the old set of edges to split each of them. I also modified split from part 5, such that the new edges are assigned as is_new such that we can flip the right vertices. Lastly, I flipped the edges where the edgre was new, and one vertex is old and one vertex is new. Lastly, I looped over all vertices to assign their positions to new_positions. Some bugs I encountered are that at first I was confused about where to set the new edges. I originally wrote split_vertex->halfedge()->edge()->isNew = true; and split_vertex->halfedge()->twin()->edge()->isNew = true; and this was buggy, then I looked more closely to see which edges are "new" in split, and assigned them there. So that in later steps of this process, when checking if an edge is "new" we are able to retrieve correct results and flip accordingly. 
 </p>
 <br>
 
@@ -409,7 +409,58 @@
   Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+	I noticed that around corners and edges, it becomes more "smooth" after loop subdivison. Sharp edges no longer hold and it seems to become more of an average of the two faces that it was originally next to so it becomes more round. An example is the cube. It may be seen that initially, it had distinct triangular faces and edges, but after each subdivision, each edge gets more smooth and close to the adjacent edges such that the shape as a whole becomes more spherical at the end. 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/sq_one.png" align="middle" width="400px"/>
+			  <figcaption>Before any loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/sq_two.png" align="middle" width="400px"/>
+			  <figcaption>After the first loop subdivison</figcaption>
+			</td>
+		  </tr>
+		  <br>
+		  <tr align="center">
+			<td>
+			  <img src="images/sq_three.png" align="middle" width="400px"/>
+			  <figcaption>After the second loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/sq_many.png" align="middle" width="400px"/>
+			  <figcaption>After many loop subdivisions</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
+	However, if I pre-split some of the vertices that are on the same face, it does reduce the effect. This is because then each triangle will be adjacent to more triangles that is on the same face as it originally, so the adjacent edges on another face will not have as huge of an "averaging" or "smoothening" effect. The triangles which are only adjacent to triangles on the same plane, for example, would have been split into faces that are on another plane so it would maintain the edges better. I did this by splitting each face of the cube 5 times. I split the diagonal edge, then splitted each of the four edges on that face. Then, when running loop sub-division the shape looks much more than a cube. Then sharp edge still smoothened, but is it more visible that there used to be an edge there and that the volume is more close to a cube. 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/c_one.png" align="middle" width="400px"/>
+			  <figcaption>Before any loop subdivison, after splitting 5 times on each face of the cube.</figcaption>
+			</td>
+			<td>
+			  <img src="images/c_two.png" align="middle" width="400px"/>
+			  <figcaption>After the first loop subdivison</figcaption>
+			</td>
+		  </tr>
+		  <br>
+		  <tr align="center">
+			<td>
+			  <img src="images/c_three.png" align="middle" width="400px"/>
+			  <figcaption>After the second loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/c_many.png" align="middle" width="400px"/>
+			  <figcaption>After many loop subdivisions</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
 </p>
 <br>
 
@@ -418,7 +469,58 @@
   Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+	I showed this in the previous question, but I added the images again so it is easier to see. The cube does become asymmetric after loop sub-divison, and I think this is due to the fact that each face of the square isn't symmetric to start with, considering the diagonal in the middle. Then each triangle has different spatial relations to its surrounding triangles, hence the asymmetric result after the splitting and flipping. 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/sq_one.png" align="middle" width="400px"/>
+			  <figcaption>Before any loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/sq_two.png" align="middle" width="400px"/>
+			  <figcaption>After the first loop subdivison</figcaption>
+			</td>
+		  </tr>
+		  <br>
+		  <tr align="center">
+			<td>
+			  <img src="images/sq_three.png" align="middle" width="400px"/>
+			  <figcaption>After the second loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/sq_many.png" align="middle" width="400px"/>
+			  <figcaption>After many loop subdivisions</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
+	Hence, to preprocess the cube such that it will have a symmetric loop subdivision, I split the diagonal once so that there are 4 triangles on each face of the cube. Now when performing the subdivision process, the volume is still symmetric. Now, each triangle's relative position to triangles nearby is now the same and each face is symmetric to start with(one traingle adjacent is at the bottom longer edge on another face, each shorter edge is adjacent to a short edge of a perpendicular triangle on the same face) so now division happens symmetrically. 
+	<div align="middle">
+		<table style="width:100%">
+		  <tr align="center">
+			<td>
+			  <img src="images/s_one.png" align="middle" width="400px"/>
+			  <figcaption>Before any loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/s_two.png" align="middle" width="400px"/>
+			  <figcaption>After the first loop subdivison</figcaption>
+			</td>
+		  </tr>
+		  <br>
+		  <tr align="center">
+			<td>
+			  <img src="images/s_three.png" align="middle" width="400px"/>
+			  <figcaption>After the second loop subdivison</figcaption>
+			</td>
+			<td>
+			  <img src="images/s_many.png" align="middle" width="400px"/>
+			  <figcaption>After many loop subdivisions</figcaption>
+			</td>
+		  </tr>
+		</table>
+	</div>
 </p>
 <br>
 
