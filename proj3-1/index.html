@@ -44,7 +44,7 @@
 <h2 align="middle">YOUR NAME(S)</h2>
 
 <!-- Add Website URL -->
-<h2 align="middle">Website URL: <a href="Website link">https://nathalyspham.github.io/cs184-proj-webpages/proj3-1/index.html</a></h2>
+<h2 align="middle">Website URL: <a href="https://nathalyspham.github.io/cs184-proj-webpages/proj3-1/index.html">Website link</a></h2>
 
 <br><br>
 <!-- 
@@ -97,7 +97,7 @@ Show images with normal shading for a few small .dae files. -->
   Walk through the ray generation and primitive intersection parts of the rendering pipeline.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+I generated the ray by calculating where it should be on the image frame. We know that the ray starts as pos, which is the position of the camera. Then we just need to calculate the direction to generate the ray. To do this, first I subtracted -0.5 from x and y so that the frame is centered at (0,0). Then I found the relative position of x and y in camera space by multiplying them by 2*tan(hFov)/2 and 2*tan(vFov)/2, respectively. I constructed a vector with the new(x, y, -1),  then multiplied it by the camera to world matrix and normalized it, and let this vector be v. This was the desired direction vector. So I returned Ray(pos, v) and also set the min_t and max_t of the ray.  
 </p>
 <br>
 
@@ -105,7 +105,7 @@ Show images with normal shading for a few small .dae files. -->
   Explain the triangle intersection algorithm you implemented in your own words.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  For the primitive intersection part of the pipeline, if we do not intersect with a given object (triangle or sphere) we simply return false, otherwise, we can find information about the intersection and we set all the attributes of this intersection such as it’s time, normal, and primitive and return the intersection.
 </p>
 <br>
 
