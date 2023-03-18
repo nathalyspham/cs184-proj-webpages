@@ -122,6 +122,10 @@ For the primitive intersection part of the pipeline, if we do not intersect with
       </tr>
   </table>
 </div>
+<p>
+  Then, we check that t_min<=t<=t_max, which shows that the ray intersects with the plane. We also check that 0<=b1<=1, 0<=b2<=1, 0<=(1-b1-b2)<=1, this checks whether each barycentric coordinate of the interpolated point is valid such that the pointer is inside the triangle. Hence if all these conditions are met, we can return true, meaning that the ray did intersect the triangle. Otherwise we return false because either the ray didn't intersect with the plane or intersected the plane on a point outside of the triangle. 
+</p>
+
 
 <br>
 
@@ -461,7 +465,7 @@ It may be seen that having more ray-depth resulted in images that are brighter i
 </div>
 <br>
 <p>
-It may be noticed that as the number of samples increased the image became more smooth and there was less and less noise in the image so it produced more accurate renderings. However the time to render also increased greatly as sample per pixel increase.d 
+It may be noticed that as the number of samples increased the image became more smooth and there was less and created more realistic renderings. However the time to render also increased greatly as sample per pixel increased. 
 </p>
 <br>
 
