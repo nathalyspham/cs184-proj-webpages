@@ -84,7 +84,10 @@ Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.j
 
 <h2 align="middle">Overview</h2>
 <p>
-In this assignment we implemented ray tracing algorithms and 
+In this assignment we implemented ray tracing algorithms to render scenes. In part 1, we first worked on generating rays from a coordinate in an image to world space and pixel samples. 
+Then we implemented primitive intersection algorithm which finds the intersection between a ray and a shape. In part 2 implemented the BVH to speed up our path tracer to identifying intersections. This was an important part of our project as we realized without a proper implementation here, all other parts are rendered significantly slowly. 
+In part 3 we implemented direct illumination by calculating zero-bounce and one-bounce radiance. In part 4, we calcualted the indirect radiance by recursion to simulate the effect light bouncing off objects. The combination of direct and indirect illumination allowed us to render realistic shading for the models. 
+Lastly in part 5 we implemented importance sampling to sample more in areas where there are more changes in the radiance thus reducing noise in our rendered images. Together, in this assignment we are able to use ray-tracing algorithms to efficiently render images with realistic illumination. 
 </p>
 <br>
 
@@ -312,9 +315,19 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-  We implemented at_least_one_bounce_radiance with recursion. We utilized Russian roulette to eventually terminate the algorithm, with a termination probability of 0.3. During one recursive call, we first get L_out calling one_bounce_radiance. Then if coin_flip(0.7) is true, we continue with the recursion otherwise we just return L_out. If we decide we will continue the recursion, we first get a new sample from the bsdf with w_out. Then when generating a new ray next_r with the return wi_d. We set the depth of this ray as the depth of the current ray -1 and the min_t of the next ray as EPS_F. We calculate the cos theta as the dot product of the normal of the intersection and wi_d multiplied by the object-to-world matrix. Then if next_r’s depth is still >= 1, and bvh->intersect(next_r,&next_i) returns true, we continue with the recursion. In that case, we find the return value of the next_ray and a new intersection, let this value be r_recursed. Then finally we add this to L_out as  r_recursed * sample from bsdf * cos theta/ pdf from bsdf / 0.7 and return L_out in the end. 
-
-  Then, we implemented est_radiance_global_illumination to account for direct and indirect illustration. Hence we return L_out as the sum of values returned by zero_bound_randiance +at_least_one_bounce_radiance which are the direct and indirect illumination radiance.   
+  We implemented at_least_one_bounce_radiance with recursion. We utilized Russian roulette to eventually terminate the algorithm, with a termination probability of 0.3. During one recursive call, we first get L_out calling one_bounce_radiance. Then if coin_flip(0.7) is true, we continue with the recursion otherwise we just return L_out. If we decide we will continue the recursion, we first get a new sample from the bsdf with w_out. Then when generating a new ray next_r with the return wi_d. We set the depth of this ray as the depth of the current ray -1 and the min_t of the next ray as EPS_F. We calculate the cos theta as the dot product of the normal of the intersection and wi_d multiplied by the object-to-world matrix. Then if next_r’s depth is still >= 1, and bvh->intersect(next_r,&next_i) returns true, we continue with the recursion. In that case, we find the return value of the next_ray and a new intersection, let this value be r_recursed. Then finally we add this to L_out as  r_recursed * sample from bsdf * cos theta/ pdf from bsdf / 0.7 and return L_out in the end. The implemention mostly followed this slide from lecture. 
+</p>
+<div align="center">
+  <table style="width=100%">
+      <tr>
+          <td align="middle">
+          <img src="images/pseudocode.png" width="480px" />
+          <figcaption align="middle">Pseudocode from Lecture </figcaption>
+      </tr>
+  </table>
+</div>
+  <p>
+  Then, we implemented est_radiance_global_illumination to account for direct and indirect illustration. Hence we return L_out as the sum of values returned by zero_bound_randiance +at_least_one_bounce_radiance which are the direct (zero- and one- time bounce) and indirect (more than one-time bounce) illumination radiance summed.   
 </p>
 <br>
 
@@ -398,7 +411,7 @@ It may be seen in that in the image generated with only direct illumination, onl
 </div>
 <br>
 <p>
-    It may be seen that having more ray-depth resulted in a more bright image. This is because the rays are able to be traced further by the algorithm, bouncing off more times. The change is quite significant when max_ray_depth is small. 
+It may be seen that having more ray-depth resulted in images that are brighter in general. This is because the rays are able to be traced further by the algorithm, bouncing off more times and increasing radiance in the process. The change as max_ray_depth increase is quite significant and visible when max_ray_depth is small. 
 </p>
 <br>
 
