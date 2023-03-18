@@ -169,7 +169,9 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  In BVHAccel:construct_bvh(...), my first heuristic was to split based on the primitives’ median. I found the largest range on each axis and sorted based on that, and then, I took the median as the split point. This didn’t work because I had trouble manipulating the iterators using sort(...). Then, I tried to use a naive approach of splitting along the center of each axis, but this approach was very slow because I wouldn’t get an even split of primitives on each side. My final algorithm was to find the mean of the largest axis and use partition(...) to split on the mean. In the base case, if a box had <= the max number allowed, I would return a node with all the primitives. Otherwise, I would call construct_bvh(...) recursively to make the left child with all the items less the mean and the right child with all the items greater than the mean. I came across a problem with infinite recursion here. If all the primitives were on one side of a split and the box had too many items, the recursive call would call with the same arguments again, and I solved this issue by just adding or subtracting from the splitPoint if it was equal to start or end.
+  In BBox::intersect(...), I used lecture and discussion 5 to help me calculate the t values. I calculated the t values at the min and max locations of intersection for each axis, and then I took the max of the tmins and the min of the tmaxs in order to get the ts that correspond to the intersection of the entire box. 
+  In BVHAccel::intersect(...) and BVHAccel::has_intersection(...), everything came together. I followed the below pseudocode from lecture to make the BVH recursive algorithm and find the closest intersection. If the ray doesn’t intersect the box at all, I just return false since the ray cannot intersect any primitives in the box. Then, if the ray and box intersect, I recursively call and check for intersections in the box’s left and right children. Once I reach a leaf node that the ray intersects, I iterate over all the primitives and check for intersections between the primitive and the ray.  
 </p>
 
 <h3>
@@ -180,22 +182,16 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/lucy_bvh.png" align="middle" width="400px"/>
+        <figcaption>CBlucy.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
-      </td>
-    </tr>
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/planck_bvh.png" align="middle" width="400px"/>
+        <figcaption>maxplanck.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/dragon_bvh.png" align="middle" width="400px"/>
+        <figcaption>dragon.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -205,10 +201,39 @@ Compare rendering times on a few scenes with moderately complex geometries with 
 <h3>
   Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis.
 </h3>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/cow_bvh.png" align="middle" width="400px"/>
+        <img src="images/cow_time.png" align="middle" width="400px"/>
+        <figcaption>cow.dae before bvh</figcaption>
+      </td>
+      <td>
+        <img src="images/cow_bvh.png" align="middle" width="400px"/>
+        <img src="images/cow_bvh_time.png" align="middle" width="400px"/>
+        <figcaption>cow.dae after bvh</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/planck_bvh.png" align="middle" width="400px"/>
+        <img src="images/planck_time.png" align="middle" width="400px"/>
+        <figcaption>maxplanck.dae before bvh</figcaption>
+      </td>
+      <td>
+        <img src="images/planck_bvh.png" align="middle" width="400px"/>
+        <img src="images/planck_bvh_time.png.png" align="middle" width="400px"/>
+        <figcaption>maxplanck.dae after bvh</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
 <br>
+
+<p>
+  With my final heuristic, the speedup was crazy. First, cow is a relatively small file, so it only took 3 seconds to render without speedup, but after bvh acceleration, it only took 0.03 seconds, which is ~100x faster! Without bvh acceleration, maxplanck took 55 seconds, and with bvh, it only took 0.05 seconds which is ~1000x faster. For larger files like maxplanck, bvh acceleration is even more efficient because you always have to go through the same overhead of constructing a bvh tree and all the checks and recursion regardless of the size of the file, but larger files will use the tree more times. For very small files, bvh acceleration might even be slower because of the extra checks. The difference between with and without bvh is also greater in larger files because you are skipping more triangles since you are dividing by two at each level and are only looking at a logarithmic amount of the triangles. With bvh acceleration, there are also less rays traced by bvh, more rays per second, and less intersection tests per ray. We don’t have to check intersections between the ray and every single primitive, which means less intersection tests and rays that need to be traced.
+</p>
 
 <h2 align="middle">Part 3: Direct Illumination (20 Points)</h2>
 <!-- Walk through both implementations of the direct lighting function.
@@ -220,7 +245,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Walk through both implementations of the direct lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  First, we had to calculate the diffuse lambertian bsdf, and then, we calculated zero-bounce radiance, which is just the emission of the bsdf. Then, for one-bounce radiance, we used the Monte Carlo Estimator. We first did estimate_direct_lighting_hemisphere(...) where we sampled uniformly on a hemisphere. We used hemisphereSampler->get_sample(...) to get a sample. Then, we made a ray from hit_p to the sample. Next, we check if bvh intersects the ray, and if it does, add f(...) * L(...) * cos(...) / p(...) to the output. I had a hard time figuring out the pdf at first, but I just thought of what the probability of sampling on a uniform hemisphere was. Finally, we divided by the number of samples in the end. In estimate_direct_lighting_importance(...), we estimated the lighting from an intersection coming directly from a light. We iterated over all the lights in the scene and then took samples using SceneLight::sample_L(...) which fills wi, distToLight, and pdf. Now, we make a ray from hit_p to wi. If bvh does not intersect the ray, we add f(...) * L(...) * cos(...) / p(...) to the output, and we now use the newly populated wi and pdf. Finally, we divided by the number of samples.
 </p>
 
 <h3>
@@ -241,23 +266,23 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBspheres_lambertian_64_32_hemisphere.png" align="middle" width="400px"/>
+        <figcaption>CBspheres.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBbunny_H_16_8_hemisphere.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBspheres_lambertian_64_32_importance.png" align="middle" width="400px"/>
+        <figcaption>CBspheres.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBbunny_H_16_8_importance.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
     <br>
@@ -273,28 +298,53 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>1 Light Ray (example1.dae)</figcaption>
+        <img src="images/CBbunny_H_16_8_importance_1.png" align="middle" width="200px"/>
+        <figcaption>1 Light Ray (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>4 Light Rays (example1.dae)</figcaption>
+        <img src="images/CBbunny_H_16_8_importance_4.png" align="middle" width="200px"/>
+        <figcaption>4 Light Rays (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>16 Light Rays (example1.dae)</figcaption>
+        <img src="images/CBbunny_H_16_8_importance_16.png" align="middle" width="200px"/>
+        <figcaption>16 Light Rays (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
-        <figcaption>64 Light Rays (example1.dae)</figcaption>
+        <img src="images/CBbunny_H_16_8_importance_64.png" align="middle" width="200px"/>
+        <figcaption>64 Light Rays (CBbunny.dae)</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr align="center">
+      <td>
+        <img src="images/wall-e_H_16_8_importance_1.png" align="middle" width="200px"/>
+        <figcaption>1 Light Ray (wall-e.dae)</figcaption>
+      </td>
+      <td>
+        <img src="images/wall-e_H_16_8_importance_4.png" align="middle" width="200px"/>
+        <figcaption>4 Light Rays (wall-e.dae)</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/wall-e_H_16_8_importance_16.png" align="middle" width="200px"/>
+        <figcaption>16 Light Rays (wall-e.dae)</figcaption>
+      </td>
+      <td>
+        <img src="images/wall-e_H_16_8_importance_64.png" align="middle" width="200px"/>
+        <figcaption>64 Light Rays (wall-e.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <p>
-    YOUR EXPLANATION GOES HERE
+  The lower the number of light rays, the more noise there is. The -l 1 images have very distinct spots obscuring the image, and there is no clear or gradient shading. In comparison, the -l 64 images have more intermediate values and smoother shading.
 </p>
 <br>
 
@@ -302,7 +352,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  The results from hemisphere sampling were a lot more noisy and included more dark spots. You can see this in the above images. In the bunny image, the edge between the back wall and the ceiling is not straight. There are not smooth blends anywhere. These problems can also be seen with the spheres. This is because when we use uniform hemisphere sampling, we are using uniform random samples from ANYWHERE on the hemisphere, so we are likely to hit spots that are not the light source. And this makes only a small proportion of the random samples contribute to the overall light
 </p>
 <br>
 
