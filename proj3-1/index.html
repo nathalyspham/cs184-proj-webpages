@@ -41,7 +41,7 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
 <h1 align="middle">Project 3-1: Path Tracer</h1>
-<h2 align="middle">YOUR NAME(S)</h2>
+<h2 align="middle">Kehan Li and Nathalys Pham</h2>
 
 <!-- Add Website URL -->
 <h2 align="middle">Website URL: <a href="https://nathalyspham.github.io/cs184-proj-webpages/proj3-1/index.html">Website link</a></h2>
@@ -84,7 +84,7 @@ Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.j
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+In this assignment we implemented ray tracing algorithms and 
 </p>
 <br>
 
@@ -99,14 +99,27 @@ Show images with normal shading for a few small .dae files. -->
 <p>
 I generated the ray by calculating where it should be on the image frame. We know that the ray starts as pos, which is the position of the camera. Then we just need to calculate the direction to generate the ray. To do this, first I subtracted -0.5 from x and y so that the frame is centered at (0,0). Then I found the relative position of x and y in camera space by multiplying them by 2*tan(hFov)/2 and 2*tan(vFov)/2, respectively. I constructed a vector with the new(x, y, -1),  then multiplied it by the camera to world matrix and normalized it, and let this vector be v. This was the desired direction vector. So I returned Ray(pos, v) and also set the min_t and max_t of the ray.  
 </p>
+<p>
+For the primitive intersection part of the pipeline, if we do not intersect with a given object (triangle or sphere) we simply return false, otherwise, we can find information about the intersection and we set all the attributes of this intersection such as it’s time, normal, and primitive and return the intersection.
+</p>
 <br>
 
 <h3>
   Explain the triangle intersection algorithm you implemented in your own words.
 </h3>
 <p>
-  For the primitive intersection part of the pipeline, if we do not intersect with a given object (triangle or sphere) we simply return false, otherwise, we can find information about the intersection and we set all the attributes of this intersection such as it’s time, normal, and primitive and return the intersection.
+  On a higher level, I achieved this by first detecting whether the ray intersects with the plane of the triangle, then using barycentric coordinates to find whether the point of intersection is within the triangle. But this was achieved in a simple fashion through the Möller–Trumbore algorithm. We closely followed the equations on the lecture slides to implement this algorithm.
 </p>
+<div align="center">
+  <table style="width=100%">
+      <tr>
+          <td align="middle">
+          <img src="images/triangle_q.png" width="480px" />
+          <figcaption align="middle">The Möller–Trumbore algorithm </figcaption>
+      </tr>
+  </table>
+</div>
+
 <br>
 
 <h3>
@@ -117,15 +130,15 @@ I generated the ray by calculating where it should be on the image frame. We kno
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/1_empty.png" align="middle" width="400px"/>
+        <figcaption>CBempty.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/1_spheres.png" align="middle" width="400px"/>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
     </tr>
-    <tr align="center">
+    <!-- <tr align="center">
       <td>
         <img src="images/your_file.png" align="middle" width="400px"/>
         <figcaption>example3.dae</figcaption>
@@ -134,7 +147,7 @@ I generated the ray by calculating where it should be on the image frame. We kno
         <img src="images/your_file.png" align="middle" width="400px"/>
         <figcaption>example4.dae</figcaption>
       </td>
-    </tr>
+    </tr> -->
   </table>
 </div>
 <br>
@@ -299,7 +312,9 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  We implemented at_least_one_bounce_radiance with recursion. We utilized Russian roulette to eventually terminate the algorithm, with a termination probability of 0.3. During one recursive call, we first get L_out calling one_bounce_radiance. Then if coin_flip(0.7) is true, we continue with the recursion otherwise we just return L_out. If we decide we will continue the recursion, we first get a new sample from the bsdf with w_out. Then when generating a new ray next_r with the return wi_d. We set the depth of this ray as the depth of the current ray -1 and the min_t of the next ray as EPS_F. We calculate the cos theta as the dot product of the normal of the intersection and wi_d multiplied by the object-to-world matrix. Then if next_r’s depth is still >= 1, and bvh->intersect(next_r,&next_i) returns true, we continue with the recursion. In that case, we find the return value of the next_ray and a new intersection, let this value be r_recursed. Then finally we add this to L_out as  r_recursed * sample from bsdf * cos theta/ pdf from bsdf / 0.7 and return L_out in the end. 
+
+  Then, we implemented est_radiance_global_illumination to account for direct and indirect illustration. Hence we return L_out as the sum of values returned by zero_bound_randiance +at_least_one_bounce_radiance which are the direct and indirect illumination radiance.   
 </p>
 <br>
 
@@ -311,12 +326,12 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/1024_bunny.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/1024_dragon.png" align="middle" width="400px"/>
+        <figcaption>dragon.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -331,11 +346,11 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/spheres_direct.png" align="middle" width="400px"/>
         <figcaption>Only direct illumination (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/spheres_indirect.png" align="middle" width="400px"/>
         <figcaption>Only indirect illumination (example1.dae)</figcaption>
       </td>
     </tr>
@@ -343,7 +358,7 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+It may be seen in that in the image generated with only direct illumination, only the faces of facing the light source and the light source itself are lit up as direct illumination is only the zero time and once time bounce. The indirect image is really interesting as it seems as if there are light sources placed everywhere, but this is because the indirect case shows the light resulting from bounces that are not the first one so it looks like it came from many directions.  
 </p>
 <br>
 
@@ -355,27 +370,27 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_d_0.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_d_1.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_d_2.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_d_3.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_d_100.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
       </td>
     </tr>
@@ -383,7 +398,7 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    It may be seen that having more ray-depth resulted in a more bright image. This is because the rays are able to be traced further by the algorithm, bouncing off more times. The change is quite significant when max_ray_depth is small. 
 </p>
 <br>
 
@@ -395,45 +410,45 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1 sample per pixel (example1.dae)</figcaption>
+        <img src="images/bunny_s_1.png" align="middle" width="400px"/>
+        <figcaption>1 sample per pixel (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>2 samples per pixel (example1.dae)</figcaption>
-      </td>
-    </tr>
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>4 samples per pixel (example1.dae)</figcaption>
-      </td>
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>8 samples per pixel (example1.dae)</figcaption>
+        <img src="images/bunny_s_2.png" align="middle" width="400px"/>
+        <figcaption>2 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>16 samples per pixel (example1.dae)</figcaption>
+        <img src="images/bunny_s_4.png" align="middle" width="400px"/>
+        <figcaption>4 samples per pixel (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>64 samples per pixel (example1.dae)</figcaption>
+        <img src="images/bunny_s_8.png" align="middle" width="400px"/>
+        <figcaption>8 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+        <img src="images/bunny_s_16.png" align="middle" width="400px"/>
+        <figcaption>16 samples per pixel (CBbunny.dae)</figcaption>
+      </td>
+      <td>
+        <img src="images/bunny_s_64.png" align="middle" width="400px"/>
+        <figcaption>64 samples per pixel (CBbunny.dae)</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/bunny_s_1024.png" align="middle" width="400px"/>
+        <figcaption>1024 samples per pixel (CBbunny.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+It may be noticed that as the number of samples increased the image became more smooth and there was less and less noise in the image so it produced more accurate renderings. However the time to render also increased greatly as sample per pixel increase.d 
 </p>
 <br>
 
@@ -446,7 +461,7 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  Adaptive sampling detects whether a pixel has converged as we trace ray samples through it. Through this, it reduces noise in the ray-traced image as it concentrates on sampling in more difficult parts of the image so it doesn't sample the same for each pixel. Our implementation closely follows the formula given in the spec. Within every loop of sampling, we now check if loop i modular samplesperbatch is = 0 because then we need to check for convergence. To check for convergence, we calculate the standard division and mean using s1 and s2 variables which we tracked during the sampling loop. From there, we calculated I=1.96*std/(current number of loops completed) and checked whether I<=maxTolerance*mean, if this is true, we break out of the loop because we have “converged” already and don’t need to sample further here, otherwise the loop continues as usual. 
 </p>
 <br>
 
@@ -458,26 +473,29 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example1.dae)</figcaption>
+        <img src="images/2048_bunny.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example1.dae)</figcaption>
+        <img src="images/2048_bunny_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example2.dae)</figcaption>
+        <img src="images/2048_dragon.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (dragon.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example2.dae)</figcaption>
+        <img src="images/2048_dragon_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (dragon.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
+<p>
+  It may be seen that after implementing task 5, the sample rate is a lot larger in places with more change in radiance whereas areas where the light is more consistent is sampled a lot less. This demonstrates the effectivness of adaptive sampling in reducing the number of samples in some areas and hence reducing noise in the rendered image. 
+</p>
 <br>
 
 
