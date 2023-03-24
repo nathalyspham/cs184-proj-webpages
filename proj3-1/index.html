@@ -113,7 +113,7 @@ For the primitive intersection part of the pipeline, if we do not intersect with
   Explain the triangle intersection algorithm you implemented in your own words.
 </h3>
 <p>
-  On a higher level, I achieved this by first detecting whether the ray intersects with the plane of the triangle, then using barycentric coordinates to find whether the point of intersection is within the triangle. But this was achieved in a simple fashion through the Möller–Trumbore algorithm. We closely followed the equations on the lecture slides to implement this algorithm.
+  On a higher level, I achieved this by first detecting whether the ray intersects with the plane of the triangle, then using barycentric coordinates to find whether the point of intersection is within the triangle. But these two steps were combined and we implemented them through the Möller–Trumbore algorithm. We closely followed the equations on the lecture slides to implement this algorithm to find the values of t, b1 and b2. 
 </p>
 <div align="center">
   <table style="width=100%">
@@ -125,7 +125,7 @@ For the primitive intersection part of the pipeline, if we do not intersect with
   </table>
 </div>
 <p>
-  Then, we check that t_min<=t<=t_max, which shows that the ray intersects with the plane. We also check that 0<=b1<=1, 0<=b2<=1, 0<=(1-b1-b2)<=1, this checks whether each barycentric coordinate of the interpolated point is valid such that the pointer is inside the triangle. Hence if all these conditions are met, we can return true, meaning that the ray did intersect the triangle. Otherwise we return false because either the ray didn't intersect with the plane or intersected the plane on a point outside of the triangle. 
+  After we find t, b1 and b2, we check that t_min<=t<=t_max, which shows that the ray intersects with the plane. We also check that 0<=b1<=1, 0<=b2<=1, 0<=(1-b1-b2)<=1, this checks whether each barycentric coordinate of the interpolated point is valid such that the pointer is inside the triangle. Hence if all these conditions are met, we can return true, meaning that the ray did intersect the triangle. Otherwise we return false because either the ray didn't intersect with the plane or it intersected the plane on a point outside of the triangle. 
 </p>
 
 
@@ -184,15 +184,15 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/lucy_bvh.png" align="middle" width="400px"/>
+        <img src="images/lucy_bvh.png" align="middle" width="350px"/>
         <figcaption>CBlucy.dae</figcaption>
       </td>
       <td>
-        <img src="images/planck_bvh.png" align="middle" width="400px"/>
+        <img src="images/planck_bvh.png" align="middle" width="350px"/>
         <figcaption>maxplanck.dae</figcaption>
       </td>
       <td>
-        <img src="images/dragon_bvh.png" align="middle" width="400px"/>
+        <img src="images/dragon_bvh.png" align="middle" width="350px"/>
         <figcaption>dragon.dae</figcaption>
       </td>
     </tr>
@@ -346,7 +346,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   </table>
 </div>
 <p>
-  The lower the number of light rays, the more noise there is. The -l 1 images have very distinct spots obscuring the image, and there is no clear or gradient shading. In comparison, the -l 64 images have more intermediate values and smoother shading.
+  The lower the number of light rays, the more noise there is. The -l 1 images have very distinct spots obscuring the image, and there is no clear or gradient shading. In comparison, the -l 64 images have more intermediate values and smoother shading. This is because with more rays we are able to get a better estimate of the true average, as we are averaging over more samples of light rays. 
 </p>
 <br>
 
@@ -416,11 +416,11 @@ You will probably want to use the instructional machines for the above renders i
     <tr align="center">
       <td>
         <img src="images/spheres_direct.png" align="middle" width="400px"/>
-        <figcaption>Only direct illumination (example1.dae)</figcaption>
+        <figcaption>Only direct illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
         <img src="images/spheres_indirect.png" align="middle" width="400px"/>
-        <figcaption>Only indirect illumination (example1.dae)</figcaption>
+        <figcaption>Only indirect illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
@@ -467,7 +467,7 @@ It may be seen in that in the image generated with only direct illumination, onl
 </div>
 <br>
 <p>
-It may be seen that having more ray-depth resulted in images that are brighter in general. This is because the rays are able to be traced further by the algorithm, bouncing off more times and increasing radiance in the process. The change as max_ray_depth increase is quite significant and visible when max_ray_depth is small. 
+It may be seen that having more ray-depth resulted in images that are brighter in general. This is because the rays are able to be traced further by the algorithm, bouncing off more times and increasing radiance accumulated in the process. The change as max_ray_depth increase is quite significant and visible when max_ray_depth is small. 
 </p>
 <br>
 
@@ -517,7 +517,7 @@ It may be seen that having more ray-depth resulted in images that are brighter i
 </div>
 <br>
 <p>
-It may be noticed that as the number of samples increased the image became more smooth and there was less and created more realistic renderings. However the time to render also increased greatly as sample per pixel increased. 
+It may be noticed that as the number of samples increased the image became more smooth and there was less noise, it created way more realistic renderings. However the time to render also increased greatly as sample per pixel increased. 
 </p>
 <br>
 
