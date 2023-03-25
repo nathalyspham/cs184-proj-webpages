@@ -18,15 +18,16 @@
 <h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
     <h2 align="middle">Nathalys Pham and Kehan Li</h2>
     <h2 align="middle"> https://nathalyspham.github.io/cs184-proj-webpages/proj3-2/index.html </h2>
-	<h2 align="middle">Overview</h2>
-	<p>
-As an overview of this project, we implemented some further ray tracing techniques that are able to enhance the "realisticness" of our rendering and render different materials. We chose to complete task 1 and task 4. In part 1, we implemented algorithms which lets us realistically render mirror and glass models using both reflection and refraction. In part 4, we extended from a pin-hole camera model to a thin-lens camera model where we can set the depth of field, allowing us to change the distance and range of focus within a rendered scene. In the end, we are able to generate renderings that strongly showcases the desired effects. 
-	
+
 
 	</p>
 	<br>
 
     <div class="padded">
+		<h2 align="middle">Overview</h2>
+		<p>
+	As an overview of this project, we implemented some further ray tracing techniques that are able to enhance the "realisticness" of our rendering and render different materials. We chose to complete task 1 and task 4. In part 1, we implemented algorithms which lets us realistically render mirror and glass models using both reflection and refraction. In part 4, we extended from a pin-hole camera model to a thin-lens camera model where we can set the depth of field, allowing us to change the distance and range of focus within a rendered scene. In the end, we are able to generate renderings that strongly showcases the desired effects. 
+		
 
         
         * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
@@ -235,14 +236,14 @@ As an overview of this project, we implemented some further ray tracing techniqu
 			<img src="images/equation4.png" align="middle" width="400px"/>
 </div>
 		<p>
-Then, I generated a ray starting at (0,0,0) towards the ray direction calculated earlier, then found the position of this ray at time focalDistance which we refer to as pFocus. Using this, I found the ray that originates from pLens and set its direction towards pFocus as pFocus-pLens, which is the blue segment in the earlier figure. Then I normalized this vector and finally generated a ray which originates from pLens in world coordinates+pos with direction of the blue segment found earlier in world coordinates. Then I set the min and max t of this ray with nClip and fClip, and return this ray as the result. I initially had a bug because I did not add pos to Lens for the starting position of the ray, but was able to debug it and implemented everything correctly and quickly.
+Then, I generated a ray starting at (0,0,0) towards the ray direction calculated earlier, then found the position of this ray at time focalDistance which we refer to as pFocus. Using this, I found the ray that originates from pLens and set its direction towards pFocus as pFocus-pLens, which is the blue segment in the earlier figure. Then I normalized this vector and finally generated a ray which originates from pLens in world coordinates+pos with direction of the blue segment found earlier in world coordinates. Then I set the min and max t of this ray with nClip and fClip, and return this ray as the result. I initially had a bug because I did not add pos to pLens for the starting position of the ray, but was able to debug it and implemented everything correctly and quickly.
 
         </p>
         <p><b>
             In a few sentences, explain the differences between a pinhole camera model and a thin-lens camera model.
         </b></p>
         <p>
-            With the pin-hole camera model, everything is in focus. With the thin-lens camera model, objects are only in focus if they’re within a plane at distance “focal distance” away from the lens. By adjusting the focal distance and aperture size of the thin lens model, we can get different scenes where different depth ranges of the iamge is focused. A pinhole camera model is theoretically the thin-lens camera model with aperture radius 0 where everything is in focus. 
+            With the pin-hole camera model, everything is in focus. With the thin-lens camera model, objects are only in focus if they’re within a plane at distance “focal distance” away from the lens. By adjusting the focal distance and aperture size of the thin lens model, we can get different scenes where different depth ranges of the image is in focus. A pinhole camera model is theoretically the thin-lens camera model with aperture radius 0 where everything is in focus. 
         </p>
         <br>
         <p><b>
