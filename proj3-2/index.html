@@ -7,7 +7,7 @@
       padding-right: 100px;  
       padding-bottom: 0.25in;  
       padding-left: 100px;  
-    }  
+    }   
   </style> 
 <title>Your Name  |  CS 184</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -16,8 +16,15 @@
 <body>
 <br />
 <h1 align="middle">Assignment 3-2: Additional Features to PathTracer</h1>
-    <h2 align="middle">Your Name</h2>
-    <h2 align="middle">(Webpage URL)</h2>
+    <h2 align="middle">Nathalys Pham and Kehan Li</h2>
+    <h2 align="middle"> https://nathalyspham.github.io/cs184-proj-webpages/proj3-2/index.html </h2>
+	<h2 align="middle">Overview</h2>
+	<p>
+As an overview of this project, we implemented some further ray tracing techniques that are able to enhance the "realisticness" of our rendering and render different materials. We chose to complete task 1 and task 4. In part 1, we implemented algorithms which lets us realistically render mirror and glass models using both reflection and refraction. In part 4, we extended from a pin-hole camera model to a thin-lens camera model where we can set the depth of field, allowing us to change the distance and range of focus within a rendered scene. In the end, we are able to generate renderings that strongly showcases the desired effects. 
+	
+
+	</p>
+	<br>
 
     <div class="padded">
 
@@ -26,7 +33,12 @@
 
 
         <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
-
+		<p><b>
+            Implementation and Overview
+        </b></p>
+        <p>
+            In Part 1, for the BSDF::reflect((…), we used the perfect specular reflection from lecture: wi = -wo + 2(wo * n) * n, where n is Vector(0, 0, 1) and wo * n calculates cos(theta). Then, for mirror materials, we filled out MirrorBSDF::sample_f((…) which uses BSDF::reflect((…) and returns reflectance / abs_cos_theta(*wi). Then, for refraction, BSDF::refract(…) calculates wi from wo by setting wi.x = −ηwo​.x, wi.y = −ηwo​.y, and wi.z = ∓sqrt(1 − η^2 * (1 - wo​.z^2)), where η = 1/ior or ior depending on whether wo is entering or exiting. Then, RefractionBSDF::sample_f(...) uses BSDF::refract(…) and then returns transmittance / abs_cos_theta(*wi) / eta^2. Finally, for GlassBSDF::sample_f(...), we used the Fresnel equations to model the physics and Schlick’s approximation to find the ratio. If there is total internal reflection, we assign the reflection, assign pdf to 1, and return reflectance/ abs_cos_theta(*wi), and otherwise, we flip a coin based on Schlick’s approximation. If the flip is true, we assign reflection, assign pdf to R, and return R * reflectance / abs_cos_theta(*wi). If it is false, we assign refraction, set pdf to 1-R, and return (1-R) * transmittance / abs_cos_theta(*wi) / eta^2. I didn’t have any huge problems with this part. I had trouble understanding what to do at first, but reviewing lecture and looking at Ed helped a lot. I also had some bugs where I kept confusing the words “reflect” and “refract” because the words are so similar, and I called the wrong one a few times. I also used cos_theta instead of abs_cos_theta at first which caused some weird renders.
+		</p>
         <div align="middle">
             <table style="width:100%">
               <tr align="center">
@@ -207,27 +219,100 @@
         <b>
             For these subparts, we recommend using a microfacet BSDF scene to show off the cool out of focus effects you can get with depth of field!
         </b>
+		<p><b>
+            Implementation and Overview
+        </b></p>
+		<p>
+            Most of our implementation are achieved by following the relationship given in the following diagram. 
+		</p>
+		<div align="middle">
+			<img src="images/diagram.png" align="middle" width="400px"/>
+</div>
+        <p>
+            First, I found the generated ray direction with the same code as from part 3.1 generate_ray function. Then I sampled the disk representing the thin lens with the below formula for pLens: 
+		</p>
+		<div align="middle">
+			<img src="images/equation4.png" align="middle" width="400px"/>
+</div>
+		<p>
+Then, I generated a ray starting at (0,0,0) towards the ray direction calculated earlier, then found the position of this ray at time focalDistance which we refer to as pFocus. Using this, I found the ray that originates from pLens and set its direction towards pFocus as pFocus-pLens, which is the blue segment in the earlier figure. Then I normalized this vector and finally generated a ray which originates from pLens in world coordinates+pos with direction of the blue segment found earlier in world coordinates. Then I set the min and max t of this ray with nClip and fClip, and return this ray as the result. I initially had a bug because I did not add pos to Lens for the starting position of the ray, but was able to debug it and implemented everything correctly and quickly.
+
+        </p>
         <p><b>
-            In a few sentences, explain the differences between a pinhole camera model and a thin-lens camera model. 
+            In a few sentences, explain the differences between a pinhole camera model and a thin-lens camera model.
         </b></p>
         <p>
-            Your response goes here.
+            With the pin-hole camera model, everything is in focus. With the thin-lens camera model, objects are only in focus if they’re within a plane at distance “focal distance” away from the lens. By adjusting the focal distance and aperture size of the thin lens model, we can get different scenes where different depth ranges of the iamge is focused. A pinhole camera model is theoretically the thin-lens camera model with aperture radius 0 where everything is in focus. 
         </p>
         <br>
         <p><b>
             Show a "focus stack" where you focus at 4 visibly different depths through a scene. Make sure to include all screenshots.
         </b></p>
         <p>
-            Your response goes here.
+        I fixed camera lens radius to 0.2, and changed depth ranging from 4 to 5.5 with 0.5 increments. It may be seen that with depth 4, the focus depth is in front of the dragon and the dragon is entirely blurry. With 4.5, it somewhat focuses on the front part of the dragon and with 5 with focuses on the more back part of the dragon. With 5.5 the focus is on somewhere behind the dragon, so the background becomes more clear than 4 while the dragon is still blurry. This is because changing the focus distance will change the z-axis of the plane that is in focus so as we increase it, the more "back" part of the image will be in focus resulting in the observed results.
         </p>
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/dragon_d4.png" align="middle" width="400px"/>
+				  <figcaption> b=0.2 d=4 </figcaption>
+				</td>
+				<td>
+				  <img src="images/dragon_d4.5.png" align="middle" width="400px"/>
+				  <figcaption>b=0.2 d=4.5</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				<td>
+				  <img src="images/dragon_d5.png" align="middle" width="400px"/>
+				  <figcaption>b=0.2 d=5</figcaption>
+				</td>
+				<td>
+				  <img src="images/dragon_d5.5.png" align="middle" width="400px"/>
+				  <figcaption>b=0.2 d=5.5</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+		  <p>
         <br>
         <p><b>
             Show a sequence of 4 pictures with visibly different aperture sizes, all focused at the same point in a scene. Make sure to include all screenshots.
         </b></p>
         <p>
-            Your response goes here.
+        I fixed the focal distance to 4.5 and changed aperture size ranging from 0.1 to 0.4 incrementing by 0.1 each time. It may be seen that as aperture radius increased, the portion of the image that is "clear" decrease and the side of the image became more blurry. This happens because reducing the aperture makes the light cone narrower and makes the circle of confusion smaller, which increases the range in which the distance where the image is in focus. This results in the observed effect that smaller aperture radius leads to a image where more things are focused and less parts are blurry. 
         </p>
         <br>
+		<div align="middle">
+			<table style="width:100%">
+			  <tr align="center">
+				<td>
+				  <img src="images/dragon_b0.1.png" align="middle" width="400px"/>
+				  <figcaption> b=0.1 d=4.5 </figcaption>
+				</td>
+				<td>
+				  <img src="images/dragon_b0.2.png" align="middle" width="400px"/>
+				  <figcaption>b=0.2 d=4.5</figcaption>
+				</td>
+			  </tr>
+			  <tr align="center">
+				<td>
+				  <img src="images/dragon_b0.3.png" align="middle" width="400px"/>
+				  <figcaption>b=0.3 d=4.5</figcaption>
+				</td>
+				<td>
+				  <img src="images/dragon_b0.4.png" align="middle" width="400px"/>
+				  <figcaption>b=0.4 d=4.5</figcaption>
+				</td>
+			  </tr>
+			</table>
+		  </div>
+		  <h3 align="middle">Group Work</h3>
+        <p>
+         Nathalys worked on implementing part 1 and Kehan worked on implementing part 4. We mostly worked indepedently but communicated to each other on our progress as well as difficulties and tried to help one another when we encountered difficulties. We were able to collaborate well and worked efficiently together to complete the assignment. 
+        </p>
+
 
     </div>
 </body>
