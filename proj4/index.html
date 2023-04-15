@@ -62,7 +62,10 @@
   Explanation.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    In this part, I made all the masses and springs for the grid of the cloth. First, we place the point masses. We divided the entire space of the grid by the number of height and width points (width / num_width_points, height / num_height_points) to get an evenly spaced grid to figure out where we should put each point mass. If the cloth’s orientation is horizontal, we act on the xz planes, and if it is vertical, we act on the xy planes. We then set the x, y, and z in each point mass’s position accordingly and put it in the point_masses vector. Then, I checked all the coordinates in the pinned vector, and I set all the pinned booleans in the point masses at those coordinates to true. Now, we had all of the point masses set up! Then, I needed to set up all of the springs. For the structural constraints, I added a spring in between the current mass and the one to the left of it, and I added a spring in between the current mass and the one above it. For the shearing constraints, I added a spring in between the current mass and the one diagonal up and right of it and one in between the current mass and the one diagonal up and left of it. For the bending constraints, I added a spring in between the current mass and the one 2 to the left of it and one between the current mass and the one 2 above it. 
+</p>
+<p>
+	I had some trouble getting started because I needed to figure out what all the words meant like orientation and point mass and num_width_points. Reading the ed helped clear a lot of conceptual questions like how orientations work and technical questions like looping over the vectors and using pointers. The pinned vector also really messed me up. First, I couldn’t figure out how to check which point mass coordinates were in the pinned vector. I tried to loop through all the point masses and then check if they were inside the pinned vector. But I found that looking at what was in the pinned vector and then setting the point masses based off of those coordinates was easier and faster. I also thought the values in the pinned vector were stored in row-major order, so I wasn’t accessing the correct point masses. 
 </p>
 <br>
 
@@ -119,7 +122,10 @@
 	Explanation.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	Next, I had to implement the cloth movement. First, at each time step, I had to figure out what forces were acting on each point mass. I applied the total external forces (the mass times the sum of every value in external_accelerations) to each point mass’s total force. Then, I needed to apply the spring correction forces. I calculated this by looping through all the springs and multiplying the magnitude of the force applied due to Hooke’s law (||F ||= ||ks * (||pa - pb|| - l)||) times the unit vector between the two point masses. We add this value to the point masses’ forces. Second, I used Verlet integration (x​t+dt​​ = x​t​​ + v​t​​ ∗ dt + a​t​​ ∗ dt^​2) to compute new point mass positions. With approximations and damping, we get “x​t+dt​​ = x​t​​ + (1 − d) ∗ (x​t​​ − x​t−dt​​) + a​t​​ ∗ dt^​2” as the final equation. We fill in the equation with pm.position, pm.last_position, cp->damping, mass, and delta_t, and we set the result as our point mass’s new position. Third, we constrain the position updates. If any spring’s length is greater than 10% of its rest_length, we need to correct it. For any unpinned point mass at the end of a spring, I applied a vector going towards the other point mass by the amount it was over 10% of its rest_length. If both were unpinned, they each moved towards each other 50% of the way, if only one was pinned, the unpinned one would move the full length. 
+  </p>
+  <p>
+	This part was really hard for me at first because of all the vectors and c++ functions. For the spring forces, I applied only the ||Fs|| from Hooke’s law at first, but this doesn’t work since this is just a magnitude. I had to multiply this value by the unit vector in order to get an actual vector for the forces. Part 3 was especially hard for me because I still get confused with linear algebra terms and the names of the functions. But once I just simplified it as .unit() for direction and .norm() for length, this was all I really had to use. I also spent a while debugging this part because my cloth colors were reversed, but there was actually an issue with my Part 1.
   </p>
   <br>
   <tr align="center">
@@ -134,7 +140,7 @@
 	Describe the effects of changing the spring constant ks.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The cloth with ks = 500 N/m is stretchier and looser, with more ripples as it falls, than the original with ks = 5000 N/m. The lower spring constant cloth also sags more in its resting position. The cloth with ks = 50000 N/m is stiffer and has less wrinkles than the original, and sags less in its resting position. The higher the ks, the more stiff the cloth is. The spring constant is the force needed to move a spring, so a higher spring constant means a spring is harder to stretch or compress. Force in Hooke’s law is proportional to ks, so the larger the ks, the stiffer the spring, and the harder it is to move.
 </p>
 <div align="middle">
 	<table style="width:100%">
@@ -170,7 +176,7 @@
 	Describe the effects of changing the density.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    Going from left to right, from least dense to most dense, the cloth gets heavier and sags more in its final position. The dip in the middle of the steady state position cloth also gets lower with a higher density. Density is the amount of mass per area, so a greater density means more mass per area. Items with a greater density are more compact and heavier. The cloth with the higher density weighs itself down more, making it sag more. 
 </p>
 <div align="middle">
 	<table style="width:100%">
@@ -205,7 +211,7 @@
 	Describe the effects of changing damping.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The cloth with 0.0% damping swings a lot and has a lot of ripples. The cloth with damping = 1.0% is super stiff and falls really slowly. Damping is the restraining of oscillation, so a higher damping means a stiffer cloth. The cloth with the greatest damping is not as affected by oscillatory forces or outside movement, and there seems to be a lot of resistive force or friction. Contrastly, the cloth with the least damping is easily affected by these outside forces, and this makes it swing back and forth before reaching its final position, and there seems to be no friction.
 </p>
 <div align="middle">
 	<table style="width:100%">
@@ -248,7 +254,7 @@
 	  <video controls="controls" align="middle" width="400px" name="Video Name">
 		<source src="images/Screen Recording 2023-04-13 at 12.47.55 PM.mov">
 	  </video>
-	  <figcaption>pinned 4, original settings</figcaption>
+	  <figcaption>pinned4.json, original settings</figcaption>
 	</td>
 </tr>
 </table>
@@ -261,7 +267,10 @@
 	Explanation.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	In Part 3, we handle collisions between our cloth and spheres and planes. First, I handled spheres, and the first thing I had to figure out was how do we know the cloth collides with the sphere. It collides when the point mass hits or goes through the sphere or when the length of the vector between the origin of the sphere and position of the mass is <= the radius of the sphere. Then, I had to figure out where it hits or the tangent point, and this is the vector from the origin to pm.position that has the length of the radius. Then, the correction vector is what we should apply to pm.last_position to get to the tangent point/ surface of the sphere, instead of going through the sphere. We then set our pm.position by adding the correctionVector, adjusted with friction, to our last position. Second, for collision with planes, I had to answer all of the same questions again. Figuring out plane collisions was harder, and the final product was less cool! To figure out if the point mass collides with the plane, I had to check if pm.last_position and pm.position were on the same side of the plane. I use the line equation from Lecture 2 to figure out what sides pm.last_position and pm.position are on, and if one is positive and the other is negative then we know that pm collided with the plane. Then, we need to figure out where the tangent point will be. I used the Ray Intersection with Plane equation to find the t when it collides. I found the tangent point by multiplying t by the unit vector from pm.last_position to pm.position starting at pm.last_position. Then, we need the correction vector like before; this is how we get to the tangent point from pm.last_position. We just subtract pm.last_position from the tangent point and then subtract a surface offset to get the final vector. Finally, we update the new position by adding the correction vector, scaled down by friction, to pm.last_position.
+</p>
+<p>
+	Doing the sphere intersection was pretty intuitive for me. The hardest part of this part was figuring out when pm intersects a plane, but I saw an Ed comment that pointed to lecture slides which helped me figure out when and where there was an intersection. 
   </p>
   <br>
 
@@ -272,7 +281,7 @@
 </b>
 
 <p>
-    YOUR RESPONSE GOES HERE
+    The ks = 500 N/m cloth is like a thin, loose cloth, and the ks = 50000 N/m cloth is like a thick, stiff cloth. The 500 N/m cloth also stretches around the sphere more, and we can see more of the shape of the sphere under it. The 500 N/m also has smaller and more folds. The original ks = 5000 N/m cloth is somewhere in the middle. A higher spring constant means that the springs are more resistant to change and are stiffer. This makes sense why the cloth with the highest spring constant is the most stiff and structured.
 </p>
 
 <div align="middle">
@@ -319,7 +328,10 @@
 	Explanation.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	In Part 4, we handle self-collision by implementing spatial hashing. First, we need to fill Cloth::hash_position(...) so that we can compute hashes for all coordinates. I divided the 3D space into smaller 3D boxes, and I divided and floored the coordinates so that nearby coordinates would end up in the same 3D box. I looked up a good hash function and found 2^x * 3^y * 5^z online, and I like how simple it is. Second, I needed to build the map and map all the hashes to an array of point masses with that hash. I just looped through all the point masses, computed their hash based off of pm.position, and added them into the map. Third, I had to figure out all the vector math to make points not collide with each other. I loop through all the pm with the same hash as the given pm. If the distance between the given pm and its neighbor is less than 2 * thickness, we need to move the given pm. I just moved the current pm 2 * thickness away from its neighbor when this happens. I added the average of all of these correction vectors (scaled down by simulation_steps) from all the neighbors to pm.position.
+</p>
+<p>
+	The first bug I had was that I was not making sure that count was > 0, so I ran into cases where I was dividing by 0. I also had a silly mistake where I was looping through all of the pm and not just the ones with the same hash as the given pm. I had my vectors in the wrong direction a few times too, and this caused my cloth to collapse into itself since points kept getting closer and closer. After I fixed all these issues in Cloth::self_collide(...), selfCollision.json still wasn’t rendering properly, and I actually had a bug with my hash function. I was using mod the wrong way, and I was mapping points that were far away from each other together. I just switched to using floor since it was easier.
   </p>
   <br>
 
@@ -358,7 +370,7 @@
 	Vary the density and describe with words and screenshots how they affect the behavior of the cloth as it falls on itself.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The low density cloth falls in ribbons with less wrinkles. The high density cloth crumbles as it falls. The ribbons for the low density cloth are bigger, and the ribbons for the high density cloth are smaller and aren’t as smooth.
 </p>
 <div align="middle">
 	<table style="width:100%">
@@ -394,7 +406,7 @@
     Vary the ks and describe with words and screenshots how they affect the behavior of the cloth as it falls on itself
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The smaller ks cloth has smaller ribbons and more wrinkles as it falls. The bigger ks cloth has bigger ripples and is more stiff. This is because a bigger ks means that the springs are more stiff and harder to move. While the springs in the smaller ks cloth stretch and compress frequently and crazily.
 </p>
 <div align="middle">
 	<table style="width:100%">
