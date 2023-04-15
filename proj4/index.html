@@ -51,7 +51,7 @@
 
 <h2 align="middle">Overview</h2>
 <p>
-	For this project, we built a cloth simulation which simualtes the realistic behavior of cloth by coding its behavior when it folds, interacts with other objects and how it should be shaded. In part 1, we made masses and spring for the grid of the cloth. In part 2, we implemented the movemen tof the cloth by calculating the forces on each point mass. In part 3, we coded the handling of collision with other objects by calculating tangent points. In part 4, we handled collision of the cloth with itself with spatial hashing. Lastly in part 5, we implemented a variety of shader to add lighting to our cloth including Blinn-Phong shading, Diffuse shading, texture shading, mirror shading, displacement and bump shading. Finally with all the different parts, we are able to simulate the interesting appearance and realistic physical behavior of cloth. 
+	For this project, we built a cloth simulator that simulates the cloth realistically by modeling its behavior when it folds, and interacts with other objects and modeling its shading. In part 1, we made masses and springs for the grid of the cloth. In part 2, we implemented the movement of the cloth by calculating the forces on each of its point masses. In part 3, we coded the handling of collision with other objects by calculating tangent points. In part 4, we handled the collision of the cloth with itself with spatial hashing. Lastly, in part 5, we implemented a variety of shaders to add lighting to the cloth including Blinn-Phong shading, Diffuse shading, texture shading, mirror shading, displacement, and bump shading. Finally, with all the different parts, we are able to simulate the interesting appearance and realistic physical behavior of cloth. 
 </p>
 <br>
 
@@ -441,7 +441,7 @@
 
 <h3 align="middle">Part 5: Shaders</h3>
 <b>
-	In this part we implemented different shader programs to shade our scene. Specifically we built diffuse shading, Blinn-Phong shading, texture shading, mirror shading, displacement shading and bump shading. I will go into more details on how each part is supposed to be implemented in their respective sections. But after finishing this part, we are now able to change all the shaders in our GUI to render different shading effects on our scene. 
+	In part 5, we implemented different shader programs to shade our scene. Specifically we built diffuse shading, Blinn-Phong shading, texture shading, mirror shading, displacement shading and bump shading. I will go into more details on how each part is supposed to be implemented in their respective sections. I mostly encountered problems with displacement shading because it was initially difficult to understand the working of the vertex shader and the different matrices such as u_model and u_view_projection, but I was abled to understand them eventually by reading through the code and spec more closely. After we finished all the subparts in this part of the project, we are now able to change all the shaders in our GUI to render different shading effects on our scene. 
   </b>
   <p>
 	  
@@ -452,7 +452,7 @@
 	Explain in your own words what is a shader program and how vertex and fragment shaders work together to create lighting and material effects.
   </b>
   <p>
-	Shader programs run in parallel on the GPU and they carry out parts of the graphics pipeline, generally outputting 4 dimensional vectors. We worked with type types of OpenGL shader types in this project. The first one is vertex shaders. Those shaders modify vertices and their geometric properties like position and normal vectors,and an example of this shader is Displacement Shading. The other type is fragment shaders, which process fragments to modify colors for shading, and an example of this is Blinn-Phong Shading. In this project, the output of our vertex shader is the input to the fragment shader. 
+	Shader programs run in parallel on the GPU and they carry out parts of the graphics pipeline, generally outputting 4 dimensional vectors. We worked with type types of OpenGL shader types in this project. The first one is vertex shaders. Those shaders modify vertices and their geometric properties like position and normal vectors,and an example of this shader is Displacement Shading. The other type is fragment shaders, which process fragments to modify colors for shading, and an example of this is Blinn-Phong Shading. In this project, the output of our vertex shader is the input to the fragment shader so that both material effects and lighting effects are created on the cloth. 
   </p>
   <br>
 
@@ -460,7 +460,7 @@
 	Explain the Blinn-Phong shading model in your own words.
   </b>
   <p>
-	 The Blinn-Plong shading takes into the account the combined effect of ambient light, specular light and diffused light to create realistic light shading for a scene. I implemented it closely following the equation given in the spec, calculating each componenet of the lighting then summing them and setting the color to this sum. 
+	 The Blinn-Phong shading takes into account the combined effect of ambient light, specular light and diffused light to create realistic light shading for a scene. I implemented it closely following the equation given in the spec, calculating each componenet of the lighting then summing them and setting the color to this sum. 
   </p>
   <br>
 
@@ -523,7 +523,7 @@
 	Show a screenshots of bump mapping and displacement mapping. Compare the two approaches and resulting renders in your own words.
 	</b>
 	<p>
-	This part was quite challenging to implement, but I was able to achieve it by following most of the equations on the Spec. For bump mapping, I first calculated the matrix TBN with b as the cross product of the normal and tangent vectors. Then, I calcualted dU and dV closely following the equations. And used them to finally find n0 and nd, setting nd as the "l" in the Blinn-Phong input, then shading following the Blinn-Phong shader. For the displacement shading, we used the same .frag file as in bump shading, but we had to change the Displacement.vert file to change the properties of the vertices. In particular, we changed v_position following the equation in the spec to reflect the height map in the shading. It may be seen that with bump mapping, it creates the visual effect of a 3d pattern on the cloth, and with dispalcement mapping, there is even more clumps around the folds of the cloth showing the height in the texture. 
+	This part was quite challenging to implement, but I was able to achieve it by following most of the equations on the spec. For bump mapping, I first calculated the matrix TBN with b as the cross product of the normal and tangent vectors. Then, I calcualted dU and dV closely following the equations. Then, we used du and dv to finally find n0 and nd, setting nd as the "l" in the Blinn-Phong input, so that we add shading following the Blinn-Phong shader. For displacement shading, we used the same .frag file as in bump shading, but we had to change the Displacement.vert file to change the properties of the vertices. In particular, we changed v_position following the equation in the spec to reflect the height map in the shading. It may be seen that with bump mapping, it creates the visual effect of a 3d pattern on the cloth, and with dispalcement mapping, there is even more clumps around the folds of the cloth showing the height in the texture. 
 	</p>
 
 	<div align="middle">
@@ -614,7 +614,7 @@ To implement the mirror shader, we first calculated w0 as the normalized u_cam_p
 			<video controls="controls" align="middle" width="800" height="600" name="Video Name">
 			  <source src="images/cloth_edited.mov">
 			</video>
-			<figcaption>simulation of cloth falling on to sphere with a wind blowing towards the right</figcaption>
+			<figcaption>simulation of cloth falling on to sphere with "wind" blowing towards the right</figcaption>
 			<br>
 		
 			
