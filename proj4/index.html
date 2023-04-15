@@ -431,7 +431,7 @@
 	Explanation.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	  
   </p>
   <br>
 
@@ -439,7 +439,7 @@
 	Explain in your own words what is a shader program and how vertex and fragment shaders work together to create lighting and material effects.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	Shader programs run in parallel on the GPU and they carry out parts of the graphics pipeline, generally outputting 4 dimensional vectors. We worked with type types of OpenGL shader types in this project. The first one is vertex shaders. Those shaders modify vertices and their geometric properties like position and normal vectors,and an example of this shader is Displacement Shading. The other type is fragment shaders, which process fragments to modify colors for shading, and an example of this is Blinn-Phong Shading. In this project, the output of our vertex shader is the input to the fragment shader. 
   </p>
   <br>
 
@@ -447,31 +447,34 @@
 	Explain the Blinn-Phong shading model in your own words.
   </b>
   <p>
-	  YOUR RESPONSE GOES HERE
+	 The Blinn-Plong shading takes into the account the combined effect of ambient light, specular light and diffused light to create realistic light shading for a scene. I implemented it closely following the equation given in the spec, calculating each componenet of the lighting then summing them and setting the color to this sum. 
   </p>
   <br>
 
   <b>
 	Show screenshots of your Blinn-Phong shaders.
   </b>
+  <p>
+	The values I used for the parameters were: ka=0.1, kd = 0.8, ks = 0.5, Ia=vec3(1,1,1),and p = 40. This seemed to create a similar visual effect as in the Spec. 
+</p>
 
   <div align="middle">
 	<table style="width:100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/" align="middle" width="400px"/>
+		  <img src="images/ambient.png" align="middle" width="200px"/>
 		  <figcaption>ambient component</figcaption>
 		</td>
 		<td>
-		  <img src="images/" align="middle" width="400px"/>
+		  <img src="images/diffuse.png" align="middle" width="200px"/>
 		  <figcaption>diffuse component</figcaption>
 		</td>
 		<td>
-		  <img src="images/" align="middle" width="400px"/>
+		  <img src="images/specular.png" align="middle" width="200px"/>
 		  <figcaption>specular component</figcaption>
 		</td>
 		<td>
-			<img src="images/" align="middle" width="400px"/>
+			<img src="images/phong.png" align="middle" width="200px"/>
 			<figcaption>entire Blinn-Phong model</figcaption>
 		  </td>
 	  </tr>
@@ -482,10 +485,24 @@
   <b>
 	Show a screenshot of your texture mapping shader using your own custom texture by modifying the textures in /textures/.
   </b>
+  <p>
+	I implemented this shader by sampling in the with the texture function, with the texture I want and v_uv as an input. The texture I used was an image I took when I went skiing last winter break. 
+</p>
 
-  <div align="middle">
-	<img src="images/" align="middle" width="50%">
-  </div>
+<div align="middle">
+	<table style="width:100%">
+	  <tr align="center">
+		<td>
+		  <img src="images/texture1.png" align="middle" width="400px"/>
+		  <figcaption>Cloth and Sphere</figcaption>
+		</td>
+		<td>
+		  <img src="images/texture2.png" align="middle" width="400px"/>
+		  <figcaption>Cloth on Sphere</figcaption>
+		</td>
+	  </tr>
+	</table>
+</div>
 
   <br>
 
@@ -493,48 +510,78 @@
 	Show a screenshots of bump mapping and displacement mapping. Compare the two approaches and resulting renders in your own words.
 	</b>
 	<p>
-		YOUR RESPONSE GOES HERE
+	This part was quite challenging to implement, but I was able to achieve it by following most of the equations on the Spec. For bump mapping, I first calculated the matrix TBN with b as the cross product of the normal and tangent vectors. Then, I calcualted dU and dV closely following the equations. And used them to finally find n0 and nd, setting nd as the "l" in the Blinn-Phong input, then shading following the Blinn-Phong shader. For the displacement shading, we used the same .frag file as in bump shading, but we had to change the Displacement.vert file to change the properties of the vertices. In particular, we changed v_position following the equation in the spec to reflect the height map in the shading. It may be seen that with bump mapping, it creates the visual effect of a 3d pattern on the cloth, and with dispalcement mapping, there is even more clumps around the folds of the cloth showing the height in the texture. 
 	</p>
 
 	<div align="middle">
 		<table style="width:100%">
 		  <tr align="center">
 			<td>
-			  <img src="images/" align="middle" width="400px"/>
-			  <figcaption>bump mapping on cloth</figcaption>
+			  <img src="images/bump_128.png" align="middle" width="400px"/>
+			  <figcaption>bump mapping on cloth and sphere</figcaption>
 			</td>
 			<td>
-			  <img src="images/" align="middle" width="400px"/>
-			  <figcaption>bump mapping on sphere</figcaption>
+			  <img src="images/b_128.png" align="middle" width="400px"/>
+			  <figcaption>bump mapping for cloth on sphere</figcaption>
 			</td>
 			</tr>
 			<tr align="center">
 				<td>
-				  <img src="images/" align="middle" width="400px"/>
-				  <figcaption>displacement mapping on cloth</figcaption>
+				  <img src="images/displacement_128.png" align="middle" width="400px"/>
+				  <figcaption>displacement mapping on cloth and sphere</figcaption>
 				</td>
 				<td>
-				  <img src="images/" align="middle" width="400px"/>
-				  <figcaption>displacement mapping on sphere</figcaption>
+				  <img src="images/d_128.png" align="middle" width="400px"/>
+				  <figcaption>displacement mapping for cloth on sphere</figcaption>
 				</td>
-				</tr>
 			</table>
 			</div>
+			<p>
+				Then, I compared the shading on the sphere for different levels of coarseness. With 128, the image looks a lot more realistic with smoother edges than the one with 16. 
+			</p>
+
+
+			<div align="middle">
+				<table style="width:100%">
+				  <tr align="center">
+					<td>
+					  <img src="images/b_16.png" align="middle" width="400px"/>
+					  <figcaption>coarseness 16 bump mapping</figcaption>
+					</td>
+					<td>
+					  <img src="images/d_16.png" align="middle" width="400px"/>
+					  <figcaption>coarseness 16 displacement mapping</figcaption>
+					</td>
+					</tr>
+					<tr align="center">
+						<td>
+						  <img src="images/b_128_1.png" align="middle" width="400px"/>
+						  <figcaption>coarseness 128 bump mapping</figcaption>
+						</td>
+						<td>
+						  <img src="images/d_128.2.png" align="middle" width="400px"/>
+						  <figcaption>coarseness 128 displacement mapping</figcaption>
+						</td>
+					</table>
+					</div>
 <br>
 
 <b>
 	Show a screenshot of your mirror shader on the cloth and on the sphere.
 </b>
+<p>
+
+</p>
 <div align="middle">
 	<table style="width:100%">
 	  <tr align="center">
 		<td>
-		  <img src="images/" align="middle" width="400px"/>
-		  <figcaption>mirror shader on cloth</figcaption>
+		  <img src="images/mirror1.png" align="middle" width="400px"/>
+		  <figcaption>mirror on falling cloth</figcaption>
 		</td>
 		<td>
-		  <img src="images/" align="middle" width="400px"/>
-		  <figcaption>mirror shader on sphere</figcaption>
+		  <img src="images/mirror2.png" align="middle" width="400px"/>
+		  <figcaption>mirror shader cloth on sphere</figcaption>
 		</td>
 		</tr>
 		</table>
@@ -542,12 +589,20 @@
 		<br>
 
 		<b>
-			Explain what you did in your custom shader, if you made one.
+			Extra credit
 		</b>
 			<p>
-				YOUR RESPONSE GOES HERE
+				We implemented the effect of wind as our extra credit. In the simulate function for cloth.cpp, we added another externel force for the wind with a wind of speed 0.2 "blowing" towards the right. Its effect is added as a vector on the totalExternelField variable. The effect of adding this force on our simualtion is shown in the video below. 
 			</p>
+			<br>
+			<tr align="center">
+			<video controls="controls" align="middle" width="800" height="600" name="Video Name">
+			  <source src="images/cloth_edit.mp4">
+			</video>
+			<figcaption>simulation of cloth falling on to sphere with a wind blowing towards the right</figcaption>
+			<br>
 		
+			
 			<h2 align="middle">Write-up Link: https://nathalyspham.github.io/cs184-proj-webpages/proj4/index.html</h2>
 
 </body>
