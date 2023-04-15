@@ -274,7 +274,7 @@
   </p>
   <br>
 
-<b>
+
 
 <b>
 	Show us screenshots of your shaded cloth from scene/sphere.json in its final resting state on the sphere.
@@ -438,9 +438,10 @@
 <br>
 
 
+
 <h3 align="middle">Part 5: Shaders</h3>
 <b>
-	Explanation.
+	In this part we implemented different shader programs to shade our scene. Specifically we built diffuse shading, Blinn-Phong shading, texture shading, mirror shading, displacement shading and bump shading. I will go into more details on how each part is supposed to be implemented in their respective sections. But after finishing this part, we are now able to change all the shaders in our GUI to render different shading effects on our scene. 
   </b>
   <p>
 	  
@@ -571,7 +572,7 @@
 						  <figcaption>coarseness 128 bump mapping</figcaption>
 						</td>
 						<td>
-						  <img src="images/d_128.2.png" align="middle" width="400px"/>
+						  <img src="images/d_128_2.png" align="middle" width="400px"/>
 						  <figcaption>coarseness 128 displacement mapping</figcaption>
 						</td>
 					</table>
@@ -581,7 +582,9 @@
 <b>
 	Show a screenshot of your mirror shader on the cloth and on the sphere.
 </b>
+
 <p>
+To implement the mirror shader, we first calculated w0 as the normalized u_cam_pos- v_position. Then we calculated w1 as wo-2*dot(wo,v_normal.xyz)*v_normal.xyz. Finally we sampled from u_texture_cubemap with w1 to get the desired color for the reflection. The effects of the mirror shading can be seen below. 
 
 </p>
 <div align="middle">
@@ -609,7 +612,7 @@
 			<br>
 			<tr align="center">
 			<video controls="controls" align="middle" width="800" height="600" name="Video Name">
-			  <source src="images/cloth_edit.mp4">
+			  <source src="images/cloth_edited.mov">
 			</video>
 			<figcaption>simulation of cloth falling on to sphere with a wind blowing towards the right</figcaption>
 			<br>
